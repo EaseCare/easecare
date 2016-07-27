@@ -1,0 +1,22 @@
+{
+	"orion": {
+		"db": {
+			"connectionLimit": 10,
+			"host": "localhost",
+			"user": "root",
+			"password": "paxcel@123",
+			"database": "ease_care",
+			"restoreNodeTimeout" : 10
+		},
+		"redis" : {
+			"host" :"localhost",
+			"port" : 6379
+		},
+		"allowed-origins": true,
+		"req-logger": "dev"
+	},
+	"port" : 3000,
+	"sessionsecret" : "orioneclipse",
+	"log-level" : "debug",
+	"logging-path" : "logs"
+}

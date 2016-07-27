@@ -1,0 +1,21 @@
+{
+	"orion": {
+		"db": {
+			"connectionLimit": 10,
+			"host": "aurorapocinstance2-cluster.cluster-cwz3dqtcj9ax.us-east-1.rds.amazonaws.com",
+			"user": "auroraadmin",
+			"password": "aurora!dmin",
+			"database": "orionEclipseCommon"
+		},
+		"redis" : {
+			"host" : "localhost",
+			"port" : 6379
+		},
+		"allowed-origins": true,
+		"req-logger": "combined"
+	},
+	"port" : 3000,
+	"sessionsecret" : "orioneclipse",
+	"log-level" : "debug",
+	"logging-path" : "logs"
+}

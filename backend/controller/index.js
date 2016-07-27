@@ -1,0 +1,28 @@
+"use strict";
+//It will import all controllers in it
+
+var moduleName = __filename;
+
+var config = require('config');
+
+var response = require('./ResponseController.js');
+var logger = require('helper').logger(moduleName); 
+
+var httpResponseCodes = config.responseCodes;
+var messages = config.messages;
+
+module.exports = function(app){
+
+	app.use('/v1', require('./v1.js'));
+	
+	app.use(function(err, req, res, next) {
+		if (err.name === 'JsonSchemaValidation') {
+			logger.info(err.validations);
+			return response(messages.badRequest, httpResponseCodes.BAD_REQUEST, null, res);
+		} else {
+			next(err);
+		}
+	});
+
+};
+

@@ -1,0 +1,15 @@
+/**
+ * New node file
+ */
+
+var app = require("express")();
+
+app.use('/security', require('./security'));
+app.use('/tradeorder', require('./tradeorder'));
+app.use('/preference', require('./preference'));
+app.use('/portfolio', require('./portfolio'));
+app.use('/modeling', require('./model'));
+app.use('/product', require('./product'));
+app.use('/dashboard', require('./dashboard'));
+
+module.exports = app;
