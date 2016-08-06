@@ -26,7 +26,7 @@ module.exports = function (err, status, data, res) {
             		finalMessage = !!err.Message ? err.Message : err;
             		data = JSON.parse('{ "' + constants.ERROR_MESSAGE_KEY + '":"' + finalMessage + '" }');
             	}else{
-            		data = {"message":err,"sum":1}
+            		data = JSON.parse('{ "' + constants.ERROR_MESSAGE_KEY + '":"' + err + '" }');
             	}
             }
         }

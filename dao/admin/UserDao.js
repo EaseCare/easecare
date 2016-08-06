@@ -52,7 +52,7 @@ UserDao.prototype.addUserLogIn = function (data, cb) {
     logger.debug("user add logIn call start"+JSON.stringify(data.loggedInUser));
     
     var queryData = {
-        user_id: data.first_name,
+        user_id: data.user_id,
         email: data.email,
         mobile_number: data.mobile_number,
         password: data.password,
