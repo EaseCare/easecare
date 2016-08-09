@@ -56,7 +56,8 @@ module.exports = function(app){
 	});
 */
 	var apiWithoutAuthorization = [
-		new RegExp('\/v1\/security\/login', 'i')
+		new RegExp('\/v1\/security\/login', 'i'),
+		new RegExp('\/v1\/security\/signup', 'i')
 	];
 
 	/*

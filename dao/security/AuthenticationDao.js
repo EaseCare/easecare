@@ -21,9 +21,9 @@ AuthenticationDao.prototype.logIn = function(data, cb) {
         var query = [];
         query.push("select * from user_login where password = ? ");
         if(data.email){
-            query.push("and email = ? ");
+            query.push(" and email = ? ");
         }else if(data.mobileNumber){
-            query.push("and mobile_number = ? ");
+            query.push(" and mobile_number = ? ");
         }
         query = query.join("");
         
