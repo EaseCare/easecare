@@ -51,7 +51,7 @@ UserDao.prototype.add = function (data, cb) {
         last_name: data.last_name,
         age: data.age,
         gender: data.gender,
-        created_by: data.loggedInUser.user_id
+        //created_by: data.loggedInUser.user_id
     }
     var query = [];
     query.push(" insert into user set ? ");
