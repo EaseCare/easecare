@@ -2,17 +2,18 @@
 	"orion": {
 		"db": {
 			"connectionLimit": 10,
-			"host": "aurorapocinstance2-cluster.cluster-cwz3dqtcj9ax.us-east-1.rds.amazonaws.com",
-			"user": "oEA",
-			"password": "oEA@orion@eclipse",
-			"database": "dev_orionEclipseCommon"
+			"host": "52.42.222.93",
+			"user": "root",
+			"password": "paxcel@123",
+			"database": "easecare",
+			"restoreNodeTimeout" : 10
 		},
 		"redis" : {
-			"host" : "localhost",
+			"host" :"localhost",
 			"port" : 6379
 		},
 		"allowed-origins": true,
-		"req-logger": "combined"
+		"req-logger": "dev"
 	},
 	"port" : 3000,
 	"sessionsecret" : "orioneclipse",
