@@ -2,10 +2,10 @@
 	"orion": {
 		"db": {
 			"connectionLimit": 10,
-			"host": "localhost",
+			"host": "52.42.222.93",
 			"user": "root",
 			"password": "paxcel@123",
-			"database": "ease_care",
+			"database": "easecare",
 			"restoreNodeTimeout" : 10
 		},
 		"redis" : {
