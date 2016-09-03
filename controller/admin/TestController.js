@@ -22,7 +22,7 @@ app.get('/', function (req, res) {
     });
 });
 
-app.post('/', function (req, res) {
+/*app.post('/', function (req, res) {
     logger.info("Add Test request received");
     testService.add(req.body, function (err, status, data) {
         return response(err, status, data, res);
@@ -32,6 +32,15 @@ app.post('/', function (req, res) {
 app.get('/:id', function (req, res) {
     logger.info("Get Test detail request received");
     testService.getDetail(req.body, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});*/
+
+app.get('/:id/labs', function (req, res) {
+    logger.info("Get Test labs request received");
+     var data = req.body;
+     data.id = req.params.id;
+    testService.getTestLabs(req.body, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

@@ -15,6 +15,45 @@ var UserService = require('service/admin/UserService.js');
 var authenticationService = new AuthenticationService();
 var userService = new UserService();
 
+/**
+ * @api {get} /security/login Login API
+ * @apiName Log In
+ * @apiVersion 1.0.0
+ * @apiGroup Authentication
+ * @apiPermission appuser
+ *
+ * @apiDescription This API will login and returns JWT token. 
+ *
+ * @apiHeader {String} Content Type.
+ *
+ * @apiHeaderExample Header-Example:
+ *     {
+ *       "Content-Type" : application/json
+ *     }
+ * @apiParam {email}                email           User email id.
+ * @apiParam {mobile_number}        mobile number   User mobile number.
+ * @apiParam {password}             password        User password.
+ * 
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *        "email":"easecare@gmail.com",
+ *        "mobile_number": 9865784567,
+ *        "passowrd": "*******"
+ *    }
+ * @apiExample Example usage:
+ * curl -i http://baseurl/v1/security/login
+ *
+ * @apiSuccess {String}   token      The JWT Token.
+ *
+ * @apiError BAD_REQUEST Login credentials missing.
+ * @apiError UNAUTHORIZED Invalid login credentials.
+ *
+ * @apiErrorExample Response (example):
+ *     HTTP/1.1 401 Not Authenticated
+ *     {
+ *       "message": "UNAUTHORIZED"
+ *     }
+ */
 
 app.post('/login', function (req, res) {
     logger.info("Login request received"+req.body);

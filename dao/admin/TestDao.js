@@ -99,5 +99,38 @@ TestDao.prototype.addTestLogin = function (data, cb) {
         return cb(null, resultSet);
     });
     logger.debug("query = " + mySqlQuery.sql);
+};
+
+TestDao.prototype.getTestLabs = function(data, cb){
+    logger.debug("testlab get list method call start (getTestLabs())");
+    var query = [];
+    query.push(" SELECT l.id,l.name,lt.price,i.path as lab_image ");
+    query.push(" ,t.id as test_id,t.name as test_name ");
+    query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
+    query.push(" ,SUM(ur.rating)/COUNT(ur.rating) as average_rating,ur.review,ur.created_date ");
+    query.push(" ,u.id as user_id,u.first_name,u.last_name,u.image_id,iu.path as user_image ");
+    query.push(" FROM test as t ");
+    query.push(" LEFT JOIN lab_test as lt on lt.test_id = t.id ");
+    query.push(" LEFT JOIN lab as l on l.id = lt.lab_id ");
+    query.push(" LEFT JOIN address as a on a.id = l.address_id ");
+    query.push(" LEFT JOIN user_rating as ur on ur.lab_id = l.id ");
+    query.push(" LEFT JOIN image as i on i.id = l.image_id ");
+    query.push(" LEFT JOIN user as u on u.id = ur.user_id ");
+    query.push(" LEFT JOIN image as iu on iu.id = u.image_id ");
+
+    if (data.id) {
+        query.push(" where t.id = ? ");
+    }
+    query.push(" GROUP BY l.id ");
+    query = query.join("");
+
+
+    var mySqlQuery = connection.query(query, [data.id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("login query = " + mySqlQuery.sql);
 }
 module.exports = TestDao;

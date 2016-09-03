@@ -14,6 +14,7 @@ var responseCodes = config.responseCode;
 
 var UserService = require('service/admin/UserService.js');
 var userService = new UserService();
+var emailService = require('service/mail/EmailService.js');
 
 
 app.get('/', function (req, res) {
@@ -22,6 +23,12 @@ app.get('/', function (req, res) {
         return response(err, status, data, res);
     });
 });
+
+app.get('/mail',function(req,res){
+    emailService.sendMail("register",{email:"s.karambeer@gmail.com",subject:"Hello ✔"},function(err,status,data){
+        return response(err,status,data,res);
+    })
+})
 
 app.post('/', function (req, res) {
     logger.info("Add User request received");

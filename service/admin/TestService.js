@@ -6,6 +6,7 @@ var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var testDao = new (require('dao/admin/TestDao.js'))();
+var testResponser = new (require('responser/TestResponser.js'))();
 var TestService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -80,4 +81,17 @@ TestService.prototype.add = function (data, cb) {
 /*********************************Add End************************************************/
 
 
+TestService.prototype.getTestLabs = function (data, cb) {
+    logger.info(" Test Lab get list service called (getTestLabs())");
+    var self = this;
+
+    testDao.getTestLabs(data, function (err, entities) {
+        if (err) {
+            logger.error("Error in get test lab list (getTestLabs()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        var getTestLabResponse = testResponser.getListResponse(entities);
+        return cb(null, responseCodes.SUCCESS, getTestLabResponse);
+    });
+}
 module.exports = TestService;
