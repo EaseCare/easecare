@@ -42,14 +42,15 @@ exports.authorization = function() {
 						} else {
 							/*var cacheObject = localCache.get(req.data.reqId);
 							cacheObject.session = decoded;
-							decoded.token = token;
-							req.data.user = {userId: decoded.actualUserId, firmId: decoded.firmId };*/
+							decoded.token = token;*/
+							logger.debug("decoded user is"+JSON.stringify(decoded));
+							req.body.logged_in_user = {user_id: decoded.user_id};
 							sharedCache.get(token,  function(err, data){
 								if(err || !data){
 									logger.error("Error in isAuthorized (isAuthorized())" + err);
 									return unthorisedResponse(res, messages.notLoggedIn);
 								}else{
-									req.body.loggedInUser = JSON.parse(data); 
+									//req.body.loggedInUser = JSON.parse(data); 
 									logger.info("Authorization successful (isAuthorized())");
 									return next();
 								}

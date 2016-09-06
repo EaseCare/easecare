@@ -12,10 +12,10 @@ var responseCodes = config.responseCode;
 var TokenService = function() {}
 
 TokenService.prototype.generateToken = function (entity, cb) {
- 	logger.info("Generate token service called (generateToken())");
+ 	logger.info("Generate token service called (generateToken())"+entity[0].user_id);
 	 
 	var dataToToken = constants.token();
-	dataToToken.userId = entity.userId;
+	dataToToken.user_id = entity[0].user_id;
 
 	jwtService.sign(dataToToken, function (err, token) {
 		if (err) {

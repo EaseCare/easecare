@@ -5,6 +5,7 @@ var cache = require('service/cache').local;
 var logger = require('helper/Logger.js')(moduleName);
 
 var connection = require('service/mysql/Pool.js');
+var utilDao = require('dao/util/UtilDao.js');
 
 var UserDao = function () { }
 
@@ -45,13 +46,16 @@ UserDao.prototype.getDetail = function (data, cb) {
 
 UserDao.prototype.add = function (data, cb) {
     logger.debug("user add call start (add())");
-    
+    var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
         first_name: data.first_name,
         last_name: data.last_name,
         age: data.age,
         gender: data.gender,
-        //created_by: data.loggedInUser.user_id
+        created_date:date,
+        edited_date:date,
+        created_by: data.logged_in_user.user_id,
+        edited_by: data.logged_in_user.user_id
     }
     var query = [];
     query.push(" insert into user set ? ");
@@ -69,13 +73,16 @@ UserDao.prototype.add = function (data, cb) {
 
 UserDao.prototype.addUserLogin = function (data, cb) {
     logger.debug("user add logIn call start"+JSON.stringify(data));
-    
+    var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
         user_id: data.user_id,
         email: data.email,
         mobile_number: data.mobile_number,
         password: data.password,
-       // created_by: data.loggedInUser.user_id
+        created_date:date,
+        edited_date:date,
+        created_by: data.logged_in_user.user_id,
+        edited_by: data.logged_in_user.user_id
     }
     var query = [];
     query.push(" insert into user_login set ? ");
@@ -88,6 +95,6 @@ UserDao.prototype.addUserLogin = function (data, cb) {
         }
         return cb(null, resultSet);
     });
-    logger.debug("query = " + mySqlQuery.sql);
+    logger.debug("query = " + JSON.stringify(mySqlQuery));
 }
 module.exports = UserDao;

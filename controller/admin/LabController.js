@@ -22,12 +22,6 @@ app.get('/', function (req, res) {
     });
 });
 
-app.post('/', function (req, res) {
-    logger.info("Add Lab request received");
-    labService.add(req.body, function (err, status, data) {
-        return response(err, status, data, res);
-    });
-});
 
 app.get('/:id', function (req, res) {
     logger.info("Get Lab detail request received");

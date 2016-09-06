@@ -53,7 +53,7 @@ UtilDao.prototype.updateNextSeqId = function(data, cb) {
 	});
 };
 
-UtilDao.prototype.getSystemDateTime = function(date) {
+UtilDao.prototype.getMySqlFormatDateTime = function(date) {
 	Date.prototype.getFromFormat = function(format) {
 		var yyyy = this.getFullYear().toString();
 		format = format.replace(/yyyy/g, yyyy);

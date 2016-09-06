@@ -47,21 +47,14 @@ UserService.prototype.add = function (data, cb) {
     logger.info("User add service called (add())");
     var self = this;
 
-    logger.debug(" user add data is (add())" + JSON.stringify(data));
     userDao.add(data, function (err, addUserresult) {
         if (err) {
             logger.error("Error in add user (add()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
 
-        var userLoginData = {
-            user_id: addUserresult.insertId,
-            email: data.email,
-            password: data.password,
-            mobile_number: data.mobile_number
-        };
-        logger.debug(" user login data is (add())" + JSON.stringify(userLoginData));
-        userDao.addUserLogin(userLoginData, function (err, addUserLoginResult) {
+        data.user_id =  addUserresult.insertId;
+        userDao.addUserLogin(data, function (err, addUserLoginResult) {
             if (err) {
                 logger.error("Error in add user login (add()) " + err);
                 return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
