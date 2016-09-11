@@ -18,14 +18,19 @@ ShoppingCartService.prototype.getList = function (modal, cb) {
             logger.error("Error in get shoppingCart list (getList()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
+        logger.debug("entities are"+entities);
+        var resultCart = [];
         if(entities && entities.length>0){
-            try{
-                var result = JSON.parse(entities);
-            }catch(error){
-                logger.error("Error in parsing shoppingCart list (getList()) " + error);
-                return cb(error, responseCodes.INTERNAL_SERVER_ERROR);
-            }
-            return cb(null, responseCodes.SUCCESS, entities);
+            entities.forEach(function(entity){
+                try{
+                    var result = JSON.parse(entity.cart);
+                    resultCart.push(result);
+                }catch(error){
+                    logger.error("Error in parsing shoppingCart list (getList()) " + error);
+                    return cb(error, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+            });
+            return cb(null, responseCodes.SUCCESS, resultCart);
         }else{
             return cb(null, responseCodes.SUCCESS, []);
         }
