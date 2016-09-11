@@ -5,6 +5,7 @@ var cache = require('service/cache').local;
 var logger = require('helper/Logger.js')(moduleName);
 
 var connection = require('service/mysql/Pool.js');
+var utilDao = require('dao/util/UtilDao.js');
 
 var ShoppingCartDao = function () { }
 
