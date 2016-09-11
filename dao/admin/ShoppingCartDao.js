@@ -11,7 +11,7 @@ var ShoppingCartDao = function () { }
 ShoppingCartDao.prototype.getList = function (data, cb) {
     logger.debug("shoppingCart get list method call start (getList())");
     var query = [];
-    query.push(" SELECT * from cart where user_id = ?");
+    query.push(" SELECT cart from cart where user_id = ?");
     query = query.join("");
 
 
