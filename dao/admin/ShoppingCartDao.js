@@ -28,7 +28,7 @@ ShoppingCartDao.prototype.getList = function (data, cb) {
 ShoppingCartDao.prototype.add = function (data, cb) {
     logger.debug("shoppingCart add method call start (add())");
     var date = utilDao.getMySqlFormatDateTime(null);
-    queryData = {
+    var queryData = {
         cart: data.cart,
         user_id: data.logged_in_user.user_id,
         created_date: date,
