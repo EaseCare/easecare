@@ -95,7 +95,7 @@ TestDao.prototype.getTestLabs = function(data, cb){
     query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
     query.push(" ,SUM(ur.rating)/COUNT(ur.rating) as average_rating,ur.review,ur.created_date ");
     query.push(" ,u.id as user_id,u.first_name,u.last_name,u.image_id,iu.path as user_image ");
-    if(data.latitude && data.longitude && data.latitude !== 0.0 && data.logitude !== 0.0){
+    if(data.latitude && data.longitude && data.latitude !== "0.0" && data.logitude !== "0.0"){
         query.push(" ,( 6371 * acos( cos( radians(?) ) "); 
         query.push(" * cos( radians( a.`latitude` ) ) "); 
         query.push(" * cos( radians( a.`longitude` ) - radians(?) ) "); 
@@ -115,7 +115,7 @@ TestDao.prototype.getTestLabs = function(data, cb){
     }
     query.push(" GROUP BY l.id ");
     var conditionArray = [];
-    if(data.latitude && data.longitude && data.latitude !== 0.0 && data.logitude !== 0.0){
+    if(data.latitude && data.longitude && data.latitude !== "0.0" && data.logitude !== "0.0"){
         query.push(" HAVING distance <= 5 ");
         conditionArray.push(data.latitude);
         conditionArray.push(data.longitude);
