@@ -88,12 +88,19 @@ TestDao.prototype.getDetail = function (data, cb) {
 
 TestDao.prototype.getTestLabs = function(data, cb){
     logger.debug("testlab get list method call start (getTestLabs())");
+    logger.debug("lat long i got is"+data.latitude+"    "+data.longitude);
     var query = [];
     query.push(" SELECT l.id,l.name,lt.price,i.path as lab_image ");
     query.push(" ,t.id as test_id,t.name as test_name ");
     query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
     query.push(" ,SUM(ur.rating)/COUNT(ur.rating) as average_rating,ur.review,ur.created_date ");
     query.push(" ,u.id as user_id,u.first_name,u.last_name,u.image_id,iu.path as user_image ");
+    if(data.latitude && data.longitude){
+        query.push(" ,( 6371 * acos( cos( radians(?) ) "); 
+        query.push(" * cos( radians( a.`latitude` ) ) "); 
+        query.push(" * cos( radians( a.`longitude` ) - radians(?) ) "); 
+        query.push(" + sin( radians(?) ) * sin( radians( a.`latitude` ) ) ) ) AS distance ");
+    }
     query.push(" FROM test as t ");
     query.push(" LEFT JOIN lab_test as lt on lt.test_id = t.id ");
     query.push(" LEFT JOIN lab as l on l.id = lt.lab_id ");
@@ -107,13 +114,24 @@ TestDao.prototype.getTestLabs = function(data, cb){
         query.push(" where t.id = ? ");
     }
     query.push(" GROUP BY l.id ");
-    query = query.join("");
+    var conditionArray = [];
+    if(data.latitude && data.longitude){
+        query.push(" HAVING distance <= 5 ");
+        conditionArray.push(data.latitude);
+        conditionArray.push(data.longitude);
+        conditionArray.push(data.latitude);
+        conditionArray.push(data.id);
+    }else{
+        conditionArray.push(data.id);
+    }
+    query = query.join(" ");
 
 
-    var mySqlQuery = connection.query(query, [data.id], function (err, resultSet) {
+    var mySqlQuery = connection.query(query, conditionArray, function (err, resultSet) {
         if (err) {
             return cb(err);
         }
+         logger.debug("result set i got is"+JSON.stringify(resultSet));
         return cb(null, resultSet);
     });
     logger.debug("login query = " + mySqlQuery.sql);

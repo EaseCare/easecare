@@ -35,6 +35,8 @@ app.get('/:id/labs', function (req, res) {
     logger.info("Get Test labs request received");
      var data = req.body;
      data.id = req.params.id;
+     data.latitude = req.query.latitude;
+     data.longitude = req.query.longitude;
     testService.getTestLabs(req.body, function (err, status, data) {
         return response(err, status, data, res);
     });
