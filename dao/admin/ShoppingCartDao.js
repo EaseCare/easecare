@@ -38,10 +38,10 @@ ShoppingCartDao.prototype.add = function (data, cb) {
     };
 
     var query = [];
-    query.push(" INSERT INTO cart SET ? ON DUPLICATE KEY UPDATE ?");
+    query.push(" INSERT INTO cart SET ? ");
     query = query.join("");
 
-    var mySqlQuery = connection.query(query, [queryData,queryData], function (err, resultSet) {
+    var mySqlQuery = connection.query(query, [queryData], function (err, resultSet) {
         if (err) {
             return cb(err);
         }

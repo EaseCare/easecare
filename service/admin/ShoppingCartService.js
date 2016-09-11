@@ -21,17 +21,26 @@ ShoppingCartService.prototype.getList = function (modal, cb) {
         logger.debug("entities are"+entities);
         var resultCart = [];
         if(entities && entities.length>0){
+            var check = true;
             entities.forEach(function(entity){
                 try{
                     var result = JSON.parse(entity.cart);
-                    resultCart.push(result);
+                     resultCart.push(result);   
+                    logger.debug("In try");
                 }catch(error){
-                    logger.error("Error in parsing shoppingCart list (getList()) " + error);
-                    return cb(error, responseCodes.INTERNAL_SERVER_ERROR);
+                    logger.error("Error in parsing shoppingCart list (getList()) " + error);  
+                    check = false;
+                    logger.debug("In catch");
+                    return cb(error, responseCodes.INTERNAL_SERVER_ERROR);  
                 }
             });
-            return cb(null, responseCodes.SUCCESS, resultCart);
+            logger.debug("after for each");
+            if(check){
+                 logger.debug("inside check");
+                    return cb(null, responseCodes.SUCCESS, resultCart);
+            }
         }else{
+            logger.debug("last else");
             return cb(null, responseCodes.SUCCESS, []);
         }
     });
