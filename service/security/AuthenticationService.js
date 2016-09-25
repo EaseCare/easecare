@@ -39,7 +39,7 @@ AuthenticationService.prototype.logIn = function (modal, cb) {
 							return cb(messages.internalServerError, responseCodes.INTERNAL_SERVER_ERROR);
 						} else {
 							logger.debug("Data put into shared cache" + data);
-							return cb(null, code, { token: token });
+							return cb(null, code, { id:entity[0].user_id,token: token });
 						}
 					}, expire_time);
 				}
