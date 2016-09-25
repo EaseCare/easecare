@@ -35,7 +35,7 @@ ShoppingCartService.prototype.add = function (modal, cb) {
     logger.info("ShoppingCart add service called (add())");
     var self = this;
     var appointment_date = modal.appointment_date;
-    modal.date_of_birth = utilService.formatDateTime(appointment_date);
+    modal.appointment_date = utilService.formatDateTime(appointment_date);
     shoppingCartDao.add(modal, function (err, result) {
         if (err) {
             logger.error("Error in add shoppingCart (add()) " + err);

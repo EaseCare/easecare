@@ -15,6 +15,7 @@ OrderDao.prototype.createOrder = function(data, cb){
         status: 2,
         test_id: data.test_id,
         lab_id: data.lab_id,
+        appointment_date: data.appointment_date,
         user_id: data.logged_in_user.user_id,
         created_date: date,
         edited_date: date,

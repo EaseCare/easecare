@@ -13,7 +13,8 @@ var OrderService = function () { };
 OrderService.prototype.getList = function (modal, cb) {
     logger.info("Category get list service called (getList())");
     var self = this;
-
+    var appointment_date = modal.appointment_date;
+    modal.appointment_date = utilService.formatDateTime(appointment_date);
     orderDao.add(modal, function (err, result) {
         if (err) {
             logger.error("Error in get category list (getList()) " + err);
