@@ -5,7 +5,7 @@ var cache = require('service/cache').local;
 var logger = require('helper/Logger.js')(moduleName);
 
 var connection = require('service/mysql/Pool.js');
-
+var utilDao = require('dao/util/UtilDao.js');
 var PaymentDao = function () { }
 
 PaymentDao.prototype.getList = function (data, cb) {
@@ -50,5 +50,31 @@ PaymentDao.prototype.createOrderPayment = function (data, cb) {
     });
     logger.debug("create order payment query = " + mySqlQuery.sql);
 }
-
+PaymentDao.prototype.createOrderAddress = function(data, cb){
+    logger.debug("Create order address method call start (createOrderAddress())");
+    var date = utilDao.getMySqlFormatDateTime(null);
+    var queryData = {
+        full_name:data.full_name,
+        mobile_number:data.mobile_number,
+        address:data.address,
+        landmark:data.landmark,
+        gender:data.gender,
+        order_id:data.order_id,
+        created_date: date,
+        edited_date: date,
+        created_by: data.logged_in_user.user_id,
+        edited_by: data.logged_in_user.user_id
+    };
+    var query = [];
+    query.push(" INSERT INTO `order_address` SET ? ");
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query, [queryData], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("create order address query = " + mySqlQuery.sql);
+}
 module.exports = PaymentDao;

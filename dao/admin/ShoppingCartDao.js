@@ -12,7 +12,7 @@ var ShoppingCartDao = function () { }
 ShoppingCartDao.prototype.getList = function (data, cb) {
     logger.debug("shoppingCart get list method call start (getList())");
     var query = [];
-    query.push(" select c.test_id,c.lab_id,c.user_id,c.created_date ");
+    query.push(" select c.test_id,c.lab_id,c.user_id,c.created_date as cart_date ");
     query.push(" ,o.id AS order_id,t.name as test_name ");
     query.push(" ,l.name as lab_name,i.path as lab_image ");
     query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
@@ -55,6 +55,7 @@ ShoppingCartDao.prototype.add = function (data, cb) {
     var queryData = {
         test_id: data.test_id,
         lab_id: data.lab_id,
+        appointment_date: data.appointment_date,
         user_id: data.logged_in_user.user_id,
         created_date: date,
         edited_date: date,
@@ -114,4 +115,5 @@ ShoppingCartDao.prototype.createCartOrder = function(data, cb){
     });
     logger.debug("create order query = " + mySqlQuery.sql);
 }
+
 module.exports = ShoppingCartDao;

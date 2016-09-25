@@ -60,6 +60,22 @@ UtilService.prototype.isJson = function (str) {
     }
     return true;
 };
+UtilService.prototype.formatDate = function (str) {
+    if(str){
+        var dateArray = str.split("/");
+        return dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0];
+    }else{
+        return null;
+    }
+};
+UtilService.prototype.formatDateTime = function (str) {
+    if(str){
+        var dateTimeArray = str.split(" ");
+        return this.formatDate(dateTimeArray[0])+" "+dateTimeArray[1];
+    }else{
+        return null;
+    }
+};
 
 module.exports = UtilService;
     

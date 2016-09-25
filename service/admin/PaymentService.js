@@ -32,9 +32,26 @@ PaymentService.prototype.createOrderPayment = function (modal, cb) {
             logger.error("Error in create order payment (createOrderPayment()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-        return cb(null, responseCodes.SUCCESS, messages.orderPaymentSuccess);
+        self.createOrderAddress(modal,function(err,status,result){
+            if(err){
+                return cb(err,status);
+            }
+           return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+        });
     });
 }
 
+PaymentService.prototype.createOrderAddress = function (modal, cb) {
+    logger.info("createOrderAddress service called (createOrderAddress())");
+    var self = this;
+ 
+    paymentDao.createOrderAddress(modal, function(err,result){
+        if (err) {
+            logger.error("Error in create order address (createOrderAddress()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null, responseCodes.SUCCESS, result);
+    });
+}
 
 module.exports = PaymentService;

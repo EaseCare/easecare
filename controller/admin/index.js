@@ -6,4 +6,5 @@ app.use('/labs',require('./LabController.js'));
 app.use('/categories',require('./CategoryController.js'));
 app.use('/shoppingcart',require('./ShoppingCartController.js'));
 app.use('/payment',require('./PaymentController.js'));
+app.use('/orders',require('./OrderController.js'));
 module.exports = app;

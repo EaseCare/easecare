@@ -27,10 +27,12 @@ UserDao.prototype.getList = function (data, cb) {
 UserDao.prototype.getDetail = function (data, cb) {
     logger.debug("user get detail method call start (getDetail()) ");
     var query = [];
-    query.push(" SELECT u.id,u.first_name,u.last_name,u.age,u.gender ");
+    query.push(" SELECT u.id,u.first_name,u.last_name,u.date_of_birth,u.gender ");
     query.push(" ,ul.email,ul.mobile_number,ul.password ");
+    query.push(" ,a.address_line_1,a.address_line_2,a.landmark,a.city,a.state ");
     query.push(" FROM user as u ");
     query.push(" left outer join user_login as ul on ul.user_id = u.id ");
+    query.push(" left outer join address as a on a.id = u.address_id ");
     query.push(" where u.id = ? ");
     query = query.join("");
 
@@ -50,7 +52,7 @@ UserDao.prototype.add = function (data, cb) {
     var queryData = {
         first_name: data.first_name,
         last_name: data.last_name,
-        age: data.age,
+        date_of_birth: data.date_of_birth,
         gender: data.gender,
         created_date:date,
         edited_date:date,

@@ -6,6 +6,7 @@ var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var shoppingCartDao = new (require('dao/admin/ShoppingCartDao.js'))();
+var utilService = new (require('service/util/UtilService.js'))();
 var ShoppingCartService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -33,6 +34,8 @@ ShoppingCartService.prototype.getList = function (modal, cb) {
 ShoppingCartService.prototype.add = function (modal, cb) {
     logger.info("ShoppingCart add service called (add())");
     var self = this;
+    var appointment_date = modal.appointment_date;
+    modal.date_of_birth = utilService.formatDateTime(appointment_date);
     shoppingCartDao.add(modal, function (err, result) {
         if (err) {
             logger.error("Error in add shoppingCart (add()) " + err);
@@ -74,6 +77,7 @@ ShoppingCartService.prototype.getCartResponseObject = function (entities) {
         var topReview = {};
         testData.id = entity.test_id;
         testData.name = entity.test_name;
+        testData.created_date = entity.cart_date;
 
         address.line1 = entity.address_line_1;
         address.line2 = entity.address_line_2;

@@ -6,6 +6,7 @@ var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var userDao = new (require('dao/admin/UserDao.js'))();
+var utilService = new (require('service/util/UtilService.js'))();
 var UserService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -46,7 +47,8 @@ UserService.prototype.getDetail = function (data, cb) {
 UserService.prototype.add = function (data, cb) {
     logger.info("User add service called (add())");
     var self = this;
-
+    var dob = data.date_of_birth;
+    data.date_of_birth = utilService.formatDate(dob);
     userDao.add(data, function (err, addUserresult) {
         if (err) {
             logger.error("Error in add user (add()) " + err);
