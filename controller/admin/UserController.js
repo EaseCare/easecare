@@ -39,7 +39,9 @@ app.post('/', function (req, res) {
 
 app.get('/:id', function (req, res) {
     logger.info("Get User detail request received");
-    userService.getDetail(req.body, function (err, status, data) {
+    var data = req.body;
+    data.id = req.params.id;
+    userService.getDetail(data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

@@ -41,7 +41,7 @@ UserDao.prototype.getDetail = function (data, cb) {
         }
         return cb(null, resultSet);
     });
-    logger.debug("user detail query = " + mySqlQuery.sql);
+    logger.debug("user detail query = " + mySqlQuery.sql+" "+data.id);
 }
 
 UserDao.prototype.add = function (data, cb) {

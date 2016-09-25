@@ -19,22 +19,10 @@ ShoppingCartService.prototype.getList = function (modal, cb) {
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
         var resultCart = [];
-        if(entities && entities.length>0){
-            var check = true;
-            entities.forEach(function(entity){
-                try{
-                    var result = JSON.parse(entity.cart);
-                     resultCart.push(result); 
-                }catch(error){
-                    logger.error("Error in parsing shoppingCart list (getList()) " + error);  
-                    check = false;
-                    return cb(error, responseCodes.INTERNAL_SERVER_ERROR);  
-                }
-            });
-            if(check){
-                return cb(null, responseCodes.SUCCESS, resultCart);
-            }
-        }else{
+        if (entities && entities.length > 0) {
+            var responseObject = self.getCartResponseObject(entities);
+            return cb(null, responseCodes.SUCCESS, responseObject);
+        } else {
             return cb(null, responseCodes.SUCCESS, []);
         }
     });
@@ -45,25 +33,76 @@ ShoppingCartService.prototype.getList = function (modal, cb) {
 ShoppingCartService.prototype.add = function (modal, cb) {
     logger.info("ShoppingCart add service called (add())");
     var self = this;
-    //var cart = lodash.omit(modal, ['logged_in_user']);
-    var cart = JSON.stringify(modal,function(key,value){
-        if(key === 'logged_in_user'){
-            return undefined;
-        }
-        return value;
-    });
-    modal.cart = cart;
     shoppingCartDao.add(modal, function (err, result) {
         if (err) {
             logger.error("Error in add shoppingCart (add()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-        self.getList(modal,function(err,code,output){
-            return cb(err,code,output);
-        })
+        shoppingCartDao.getCartOrder(modal, function (err, result) {
+            if (err) {
+                logger.error("Error in get cart order(add()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+            }
+            if (result && result.length > 0) {
+                self.getList(modal, function (err, code, output) {
+                    return cb(err, code, output);
+                });
+            } else {
+                shoppingCartDao.createCartOrder(modal, function (err, result) {
+                    if (err) {
+                        logger.error("Error in create get cart order(add()) " + err);
+                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                    }
+                    self.getList(modal, function (err, code, output) {
+                        return cb(err, code, output);
+                    });
+                });
+            }
+        });
     });
 };
 /*********************************Add End************************************************/
 
+ShoppingCartService.prototype.getCartResponseObject = function (entities) {
+    var responseList = [];
+    var order_id = entities[0].order_id;
+    entities.forEach(function (entity) {
+        var responseObject = {};
+        var labData = {};
+        var testData = {};
+        var address = {};
+        var topReview = {};
+        testData.id = entity.test_id;
+        testData.name = entity.test_name;
 
+        address.line1 = entity.address_line_1;
+        address.line2 = entity.address_line_2;
+        address.city = entity.city;
+        address.state = entity.state;
+        address.latitude = entity.latitude;
+        address.logitude = entity.longitude;
+
+        topReview.text = entity.review;
+        topReview.created_date = entity.r_created_date;
+        topReview.user_image = entity.r_user_image;
+        topReview.last_name = entity.r_user_last_name;
+        topReview.first_name = entity.r_user_first_name;
+        topReview.user_id = entity.r_user_id;
+
+        labData.id = entity.lab_id;
+        labData.name = entity.lab_name;
+        labData.price = entity.test_price;
+        labData.image = entity.lab_image;
+        labData.address = address;
+        labData.top_review = topReview;
+
+        responseObject.testData = testData;
+        responseObject.labData = labData;
+        responseList.push(responseObject);
+    });
+    var cart = {};
+    cart.order_id = order_id;
+    cart.order_items = responseList;
+    return cart;
+}
 module.exports = ShoppingCartService;

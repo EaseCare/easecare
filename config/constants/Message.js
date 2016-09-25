@@ -3,6 +3,7 @@
 module.exports = {
 
     logout: 'You have been successfully logged out',
+    orderPaymentSuccess: 'Order Payment recieved successfully',
     jsonParserError: 'Invalid Json response, please verify data',
     redisDeleteError: 'Error occured in redis Delete operation',
     redisPutError: 'Error occured in redis Put operation',
