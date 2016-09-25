@@ -36,8 +36,11 @@ UserService.prototype.getDetail = function (data, cb) {
             logger.error("Error in get user detail (getDetail()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-
-        return cb(null, responseCodes.SUCCESS, entities);
+        if(entities && entities.length>0){
+            return cb(null, responseCodes.SUCCESS, entities[0]);
+        }else{
+            return cb(messages.userNotFound, responseCodes.NOT_FOUND);
+        }
     });
 };
 /*********************************Get Detail End************************************************/
