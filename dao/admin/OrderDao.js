@@ -8,7 +8,7 @@ var connection = require('service/mysql/Pool.js');
 
 var OrderDao = function () { }
 
-OrderDao.prototype.createOrder = function(data, cb){
+OrderDao.prototype.add = function(data, cb){
     logger.debug("Create order info method call start (createOrder())");
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
