@@ -46,4 +46,13 @@ app.get('/:id', function (req, res) {
     });
 });
 
+app.put('/:id', function (req, res) {
+    logger.info("Update User detail request received");
+    var data = req.body;
+    data.id = req.params.id;
+    userService.update(data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
+
 module.exports = app;

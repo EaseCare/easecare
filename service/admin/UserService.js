@@ -77,5 +77,71 @@ UserService.prototype.add = function (data, cb) {
 };
 /*********************************Add End************************************************/
 
-
+UserService.prototype.update = function (data, cb) {
+    logger.info("User add service called (update())");
+    var self = this;
+    var dob = data.date_of_birth;
+    data.date_of_birth = utilService.formatDate(dob);
+    userDao.get(data, function (err, user) {
+        if (err) {
+            logger.error("Error in add user (update()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(user && user.length>0){
+            if(user[0].address_id){
+                var userId = data.id;
+                data.id = user[0].address_id; 
+                userDao.updateUserAddress(data,function(err, address_result){
+                    if(err){
+                        logger.error("Error in update user address (update()) " + err);
+                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                    }
+                    data.id = userId;
+                    userDao.updateUserLogin(data,function(err, user_login_result){
+                       if(err){
+                            logger.error("Error in update user login (update()) " + err);
+                            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                        } 
+                        userDao.update(data, function(err, user_result){
+                            if(err){
+                                logger.error("Error in update user (update()) " + err);
+                                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                            } 
+                           logger.debug(" user detail get in  (update())");
+                            self.getDetail(userDetailData, function (err, code, getUserDetailResult) {
+                                return cb(err, code, getUserDetailResult);
+                            }); 
+                        })
+                    });
+                });
+            }else{
+                userDao.addUserAddress(data,function(err, address_result){
+                    if(err){
+                        logger.error("Error in add user address (update()) " + err);
+                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                    }
+                    data.address_id = address_result.insertId;
+                    userDao.updateUserLogin(data,function(err, user_login_result){
+                       if(err){
+                            logger.error("Error in update user login (update()) " + err);
+                            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                        } 
+                        userDao.update(data, function(err, user_result){
+                            if(err){
+                                logger.error("Error in update user (update()) " + err);
+                                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                            } 
+                           logger.debug(" user detail get in  (update())");
+                            self.getDetail(userDetailData, function (err, code, getUserDetailResult) {
+                                return cb(err, code, getUserDetailResult);
+                            }); 
+                        })
+                    });
+                });
+            }
+        }else{
+            return cb(messages.userNotFound,responseCodes.NOT_FOUND)
+        }
+    });
+};
 module.exports = UserService;
