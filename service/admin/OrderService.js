@@ -10,7 +10,7 @@ var paymentService = new (require('service/admin/PaymentService.js'))();
 var OrderService = function () { };
 
 /*********************************Get List Start************************************************/
-OrderService.prototype.getList = function (modal, cb) {
+OrderService.prototype.add = function (modal, cb) {
     logger.info("Category get list service called (getList())");
     var self = this;
     var appointment_date = modal.appointment_date;

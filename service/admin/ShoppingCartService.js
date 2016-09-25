@@ -109,4 +109,14 @@ ShoppingCartService.prototype.getCartResponseObject = function (entities) {
     cart.order_items = responseList;
     return cart;
 }
+ShoppingCartService.prototype.removeUserCart = function(modal,cb){
+    logger.info("ShoppingCart remove cart service called (removeUserCart())");
+    shoppingCartDao.removeUserCart(modal, function (err, result) {
+        if (err) {
+            logger.error("Error in remove shoppingCart (removeUserCart()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null,responseCodes.SUCCESS,{message:messages.cartRemove});
+    });
+}
 module.exports = ShoppingCartService;

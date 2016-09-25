@@ -6,6 +6,7 @@ var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var paymentDao = new (require('dao/admin/PaymentDao.js'))();
+var shoppingCartService = new (require('service/admin/ShoppingCartService.js'))();
 var PaymentService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -34,9 +35,16 @@ PaymentService.prototype.createOrderPayment = function (modal, cb) {
         }
         self.createOrderAddress(modal,function(err,status,result){
             if(err){
+                logger.error("Error in create order address (createOrderPayment()) " + err);
                 return cb(err,status);
             }
-           return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+            shoppingCartService.removeUserCart(modal,function(err,status,result){
+               if(err){
+                logger.error("Error in remove user cart (createOrderPayment()) " + err);
+                return cb(err,status);
+                }
+                return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});  
+            });
         });
     });
 }

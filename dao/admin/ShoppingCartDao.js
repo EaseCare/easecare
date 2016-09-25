@@ -115,5 +115,18 @@ ShoppingCartDao.prototype.createCartOrder = function(data, cb){
     });
     logger.debug("create order query = " + mySqlQuery.sql);
 }
-
+ShoppingCartDao.prototype.removeUserCart = function(data, cb){
+    logger.debug("Create order info method call start (createCartOrder())");
+    var query = [];
+    query.push(" Delete from `cart` WHERE user_id ? ");
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query, [data.logged_in_user.user_id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("remove cart object = " + mySqlQuery.sql);
+}
 module.exports = ShoppingCartDao;
