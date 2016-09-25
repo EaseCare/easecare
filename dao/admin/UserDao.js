@@ -145,7 +145,7 @@ UserDao.prototype.addUserLogin = function (data, cb) {
     });
     logger.debug("query = " + JSON.stringify(mySqlQuery));
 }
-UserDao.protottype.updateUserLogin = function (data, cb) {
+UserDao.prototype.updateUserLogin = function (data, cb) {
     logger.debug("user update logIn call start" + JSON.stringify(data));
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {};
