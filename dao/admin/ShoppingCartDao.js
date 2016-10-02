@@ -75,6 +75,22 @@ ShoppingCartDao.prototype.add = function (data, cb) {
     });
     logger.debug("shoppindCart add query = " + mySqlQuery.sql);
 }
+ShoppingCartDao.prototype.remove = function (data, cb) {
+    logger.debug("shoppingCart remove method call start (add())");
+    var date = utilDao.getMySqlFormatDateTime(null);
+
+    var query = [];
+    query.push(" DELETE FROM cart WHERE test_id = ? AND lab_id = ? AND user_id = ? ");
+    query = query.join("");
+
+    var mySqlQuery = connection.query(query, [data.test_id, data.lab_id, data.logged_in_user.user_id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("shoppindCart remove query = " + mySqlQuery.sql);
+}
 ShoppingCartDao.prototype.getCartOrder = function(data, cb){
     logger.debug("Get order info method call start (getCartOrder())");
     var query = [];

@@ -108,7 +108,7 @@ UserService.prototype.update = function (data, cb) {
                                 return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
                             } 
                            logger.debug(" user detail get in  (update())");
-                            self.getDetail(userDetailData, function (err, code, getUserDetailResult) {
+                            self.getDetail(data, function (err, code, getUserDetailResult) {
                                 return cb(err, code, getUserDetailResult);
                             }); 
                         })

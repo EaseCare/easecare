@@ -43,7 +43,7 @@ UserDao.prototype.getDetail = function (data, cb) {
     logger.debug("user get detail method call start (getDetail()) ");
     var query = [];
     query.push(" SELECT u.id,u.first_name,u.last_name,u.date_of_birth,u.gender ");
-    query.push(" ,ul.email,ul.mobile_number,ul.password ");
+    query.push(" ,ul.email,ul.mobile_number ");
     query.push(" ,a.address_line_1,a.address_line_2,a.landmark,a.city,a.state ");
     query.push(" FROM user as u ");
     query.push(" left outer join user_login as ul on ul.user_id = u.id ");
@@ -151,6 +151,9 @@ UserDao.prototype.updateUserLogin = function (data, cb) {
     var queryData = {};
     if (data.mobile_number) {
         queryData.mobile_number = data.mobile_number;
+    }
+    if (data.email) {
+        queryData.email = data.email;
     }
     queryData.edited_date = date;
     queryData.edited_by = data.logged_in_user.user_id;
