@@ -68,5 +68,11 @@ app.post('/signup', function (req, res) {
         return response(err, status, data, res);
     });
 });
+app.post('/changepassword', function (req, res) {
+    logger.info("Change password request received");
+    authenticationService.changePassword(req.body, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
 module.exports = app;
 

@@ -10,7 +10,7 @@ var constants = config.constants;
 var sharedCache = require('service/cache').shared;
 var authenticationDao = new (require('dao/security/AuthenticationDao.js'))();
 var tokenService = new (require('service/security/TokenService.js'))();
-
+var userService = new (require('service/admin/UserService.js'))();
 
 var AuthenticationService = function () { };
 
@@ -47,6 +47,57 @@ AuthenticationService.prototype.logIn = function (modal, cb) {
 		} else {
 			return cb(messages.wrongCredentials, responseCodes.UNAUTHORIZED);
 		}
+	});
+}
+AuthenticationService.prototype.changePassword = function(data, cb){
+	logger.info("Authentication service  called (changePassword())");
+	var self = this;
+	userService.isUserExist(data,function(err,status,userExist){
+		if(err){
+			logger.error("Error in isUserExist service (changePassword()) " + err);
+			return cb(err, status);
+		}
+		if(userExist){
+			data.password = data.old_password;
+			self.isValidPassword(data,function(err, status, passwordFound){
+				if(err){
+					logger.error("Error in isValidPassword service (changePassword()) " + err);
+					return cb(err, status);
+				}
+				if(passwordFound){
+					authenticationDao.changePassword(data, function (err, entity) {
+						if (err) {
+							logger.error("Error in authentication service (changePassword()) " + err);
+							return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+						}
+						logger.debug("Password Change Successfully");
+						return cb(null, responseCodes.SUCCESS, { messages:"Password change successfully." });
+					});
+				}else{
+					logger.debug("old password is not valid (changePassword())");
+					return cb(null,responseCodes.BAD_REQUEST, {messages:"Old Password is not valid"})
+				}
+			});
+		}else{
+			logger.debug("user not found (changePassword())");
+			return cb(null,responseCodes.NOT_FOUND, {messages:"User Not Found"})
+		}
+	});
+}
+AuthenticationService.prototype.isValidPassword = function(data, cb){
+	logger.info("Authentication service  called (isValidPassword())");
+	authenticationDao.isValidPassword(data, function (err, entity) {
+		if (err) {
+			logger.error("Error in authentication service (isValidPassword()) " + err);
+			return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+		}
+		if(entity && entity.length > 0 ){
+			logger.debug("Password Found Successfully");
+			return cb(null, responseCodes.SUCCESS, true);
+		}else{
+			logger.debug("Password Not Found");
+			return cb(null, responseCodes.SUCCESS, false);
+		}	
 	});
 }
 module.exports = AuthenticationService;

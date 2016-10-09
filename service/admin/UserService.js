@@ -144,4 +144,22 @@ UserService.prototype.update = function (data, cb) {
         }
     });
 };
+UserService.prototype.isUserExist = function(data, cb){
+    logger.info("User service called (isUserExist())");
+    var self = this;
+    userDao.get(data, function (err, user) {
+        if (err) {
+            logger.error("Error in service user (isUserExist()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(user && user.length>0){
+            logger.info("User found successfully (isUserExist())");
+            return cb(null,responseCodes.SUCCESS, true)
+        }
+        else{
+            logger.info("User not found successfully (isUserExist())");
+            return cb(null,responseCodes.SUCCESS, false)
+        }
+    });
+}
 module.exports = UserService;
