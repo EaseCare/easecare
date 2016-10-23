@@ -4,8 +4,9 @@ module.exports = {
 
     logout: 'You have been successfully logged out',
     orderPaymentSuccess: 'Order payment recieved successfully',
-    cartRemove: 'User Ccart removed successfully',
+    cartRemove: 'User Cart removed successfully',
     cartItemRemove: 'Item removed from cart successfully',
+    emptyCart : 'User cart is already empty',
     jsonParserError: 'Invalid Json response, please verify data',
     redisDeleteError: 'Error occured in redis Delete operation',
     redisPutError: 'Error occured in redis Put operation',

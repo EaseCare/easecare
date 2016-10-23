@@ -7,6 +7,7 @@ var responseCodes = config.responseCode;
 var messages = config.messages;
 var shoppingCartDao = new (require('dao/admin/ShoppingCartDao.js'))();
 var utilService = new (require('service/util/UtilService.js'))();
+var orderItemService = new (require('service/admin/OrderItemService.js'))();
 var ShoppingCartService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -34,36 +35,55 @@ ShoppingCartService.prototype.getList = function (modal, cb) {
 ShoppingCartService.prototype.add = function (modal, cb) {
     logger.info("ShoppingCart add service called (add())");
     var self = this;
-    var appointment_date = modal.appointment_date;
-    modal.appointment_date = utilService.formatDateTime(appointment_date);
-    shoppingCartDao.add(modal, function (err, result) {
+    shoppingCartDao.getCartOrder(modal, function (err, result) {
         if (err) {
-            logger.error("Error in add shoppingCart (add()) " + err);
+            logger.error("Error in get cart order(add()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-        shoppingCartDao.getCartOrder(modal, function (err, result) {
-            if (err) {
-                logger.error("Error in get cart order(add()) " + err);
-                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-            }
-            if (result && result.length > 0) {
+        var order_id = null;
+        if (result && result.length > 0) {
+            order_id = result[0].id;
+            modal.order_id = order_id;
+            orderItemService.add(modal,function(err, code, orderItemOutput){
+                if(err){
+                    logger.error("Error in add order item to cart(add()) " + err);
+                    return cb(err, code);
+                }   
                 self.getList(modal, function (err, code, output) {
                     return cb(err, code, output);
-                });
-            } else {
-                shoppingCartDao.createCartOrder(modal, function (err, result) {
-                    if (err) {
-                        logger.error("Error in create get cart order(add()) " + err);
-                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-                    }
+                }); 
+            });
+        } else {
+            shoppingCartDao.createCartOrder(modal, function (err, result) {
+                if (err) {
+                    logger.error("Error in create get cart order(add()) " + err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                order_id = result.insertId;
+                modal.order_id = order_id;
+                orderItemService.addOrderItem(modal,function(err, code, orderItemOutput){
+                    if(err){
+                        logger.error("Error in add order item to cart(add()) " + err);
+                        return cb(err, code);
+                    }   
                     self.getList(modal, function (err, code, output) {
                         return cb(err, code, output);
-                    });
+                    }); 
                 });
-            }
-        });
+            });
+        }
     });
 };
+ShoppingCartService.prototype.addOrderItem = function(data,cb){
+     logger.info("ShoppingCart add order_item to cart service called (addOrderItem())");
+    shoppingCartDao.addOrderItem(data,function(err,result){
+        if (err) {
+            logger.error("Error in add order Item to cart(addOrderItem()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null, responseCodes.SUCCESS, result);
+    });
+}
 /*********************************Add End************************************************/
 
 ShoppingCartService.prototype.getCartResponseObject = function (entities) {
@@ -111,22 +131,56 @@ ShoppingCartService.prototype.getCartResponseObject = function (entities) {
 }
 ShoppingCartService.prototype.removeUserCart = function(modal,cb){
     logger.info("ShoppingCart remove cart service called (removeUserCart())");
-    shoppingCartDao.removeUserCart(modal, function (err, result) {
+    shoppingCartDao.getCartOrder(modal, function (err, result) {
         if (err) {
-            logger.error("Error in remove shoppingCart (removeUserCart()) " + err);
+            logger.error("Error in get cart order(removeUserCart()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-        return cb(null,responseCodes.SUCCESS,{message:messages.cartRemove});
+        var order_id = null;
+        if (result && result.length > 0) {
+            order_id = result[0].id;
+            modal.order_id = order_id;
+            shoppingCartDao.removeUserCartOrderItem(modal, function(err,result){
+                if(err){
+                    logger.error("Error in remove shoppingCart item (removeUserCart()) " + err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                shoppingCartDao.removeUserCartOrder(modal, function (err, result) {
+                    if (err) {
+                        logger.error("Error in remove shoppingCart order (removeUserCart()) " + err);
+                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                    }
+                    return cb(null,responseCodes.SUCCESS,{message:messages.cartRemove});
+                });
+            });
+        }else{
+            logger.debug("user cart is already empty (removeUserCart())");
+            return cb(messages.emptyCart,responseCodes.FORBIDDEN);
+        }
     });
 }
 ShoppingCartService.prototype.remove = function(modal,cb){
     logger.info("ShoppingCart remove cart item service called (remove())");
-    shoppingCartDao.remove(modal, function (err, result) {
+    shoppingCartDao.getCartOrder(modal, function (err, result) {
         if (err) {
-            logger.error("Error in remove shoppingCart (remove()) " + err);
+            logger.error("Error in get cart order(remove()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-        return cb(null,responseCodes.SUCCESS,{message:messages.cartItemRemove});
+        var order_id = null;
+        if (result && result.length > 0) {
+            order_id = result[0].id;
+            modal.order_id = order_id;
+            shoppingCartDao.remove(modal, function (err, result) {
+                if (err) {
+                    logger.error("Error in remove shoppingCart (remove()) " + err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                return cb(null,responseCodes.SUCCESS,{message:messages.cartItemRemove});
+            });
+        }else{
+            logger.debug("user cart is already empty (remove())");
+            return cb(messages.emptyCart,responseCodes.FORBIDDEN);
+        }
     });
 }
 

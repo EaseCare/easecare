@@ -42,4 +42,12 @@ app.get('/:id/labs', function (req, res) {
     });
 });
 
+app.get('/trace', function (req,res) {
+    logger.info("Get Test labs request received");
+     var data = req.body;
+    testService.getTraceTest(data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
+
 module.exports = app;

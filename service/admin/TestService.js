@@ -58,6 +58,19 @@ TestService.prototype.getDetail = function (data, cb) {
 };
 /*********************************Get Detail End************************************************/
 
+TestService.prototype.getTraceTest = function(data, cb){
+     logger.info(" Test trace service called (getTraceTest())");
+    var self = this;
+
+    testDao.getTraceTest(data, function (err, entities) {
+        if (err) {
+            logger.error("Error in get trace test (getTraceTest()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        var traceTestResponse = testResponser.getTraceTestResponse(entities);
+        return cb(null, responseCodes.SUCCESS, traceTestResponse);
+    });
+}
 
 TestService.prototype.getTestLabs = function (data, cb) {
     logger.info(" Test Lab get list service called (getTestLabs())");

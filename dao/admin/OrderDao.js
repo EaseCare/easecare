@@ -9,13 +9,11 @@ var utilDao = require('dao/util/UtilDao.js');
 var OrderDao = function () { }
 
 OrderDao.prototype.add = function(data, cb){
-    logger.debug("Create order info method call start (createOrder())");
+    logger.debug("Create order dao call start (add())");
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
-        status: 2,
-        test_id: data.test_id,
-        lab_id: data.lab_id,
-        appointment_date: data.appointment_date,
+        status: data.status||2,
+        is_cart: data.is_cart||0,
         user_id: data.logged_in_user.user_id,
         created_date: date,
         edited_date: date,
