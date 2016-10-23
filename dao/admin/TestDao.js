@@ -106,11 +106,15 @@ TestDao.prototype.getTraceTest = function(data, cb){
     query.push(" inner join lab_test as lt on l.id = lt.lab_id and t.id = lt.test_id ");
     query.push(" inner join address as a on a.id = l.address_id "); 
     query.push(" where o.user_id = ? "); 
-    query.push(" and (oi.status_id!= 4 ) ");
+    if(data.status_id){
+        query.push(" and (oi.status_id = ? ) ");
+    }else{
+        query.push(" and (oi.status_id != 4 ) ");
+    }
      query.push(" order by oi.id ");
     query = query.join(" ");
 
-    var mySqlQuery = connection.query(query,[data.logged_in_user.user_id], function (err, resultSet) {
+    var mySqlQuery = connection.query(query,[data.logged_in_user.user_id,data.status_id], function (err, resultSet) {
         if (err) {
             return cb(err);
         }
