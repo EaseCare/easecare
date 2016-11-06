@@ -87,8 +87,9 @@ TestDao.prototype.getDetail = function (data, cb) {
         
 TestDao.prototype.getTraceTest = function(data, cb){
     logger.debug();
+    var statusOrTest = null;
     var query = [];
-    query.push(" SELECT oi.id as id,oi.appointment_date as appointment_date,oi.status_id ");
+    query.push(" SELECT oi.id as order_id,oi.appointment_date as appointment_date,oi.status_id ");
     query.push(" ,ois.id as order_item_status_id,ois.name as order_item_status_name ");
     query.push(" ,oisc.created_date as order_item_status_change_date "); 
     query.push(" ,oa.address as order_address,oa.landmark as order_landmark "); 
@@ -106,15 +107,22 @@ TestDao.prototype.getTraceTest = function(data, cb){
     query.push(" inner join lab_test as lt on l.id = lt.lab_id and t.id = lt.test_id ");
     query.push(" inner join address as a on a.id = l.address_id "); 
     query.push(" where o.user_id = ? "); 
-    if(data.status_id){
-        query.push(" and (oi.status_id = ? ) ");
+    if(data.test_id){
+        query.push(" and (t.id = ? ) ");
+        statusOrTest = data.test_id;
     }else{
-        query.push(" and (oi.status_id != 4 ) ");
+       if(data.status_id){
+            query.push(" and (oi.status_id = ? ) ");
+            statusOrTest = data.status_id;
+        }else{
+            query.push(" and (oi.status_id != 4 ) ");
+        } 
     }
+    
      query.push(" order by oi.id ");
     query = query.join(" ");
 
-    var mySqlQuery = connection.query(query,[data.logged_in_user.user_id,data.status_id], function (err, resultSet) {
+    var mySqlQuery = connection.query(query,[data.logged_in_user.user_id,statusOrTest], function (err, resultSet) {
         if (err) {
             return cb(err);
         }

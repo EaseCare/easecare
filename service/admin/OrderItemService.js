@@ -15,19 +15,26 @@ OrderItemService.prototype.add = function (modal, cb) {
     var self = this;
     var appointment_date = modal.appointment_date;
     modal.appointment_date = utilService.formatDateTime(appointment_date);
-    orderItemDao.add(modal, function (err, result) {
-        if (err) {
-            logger.error("Error in add order item (add()) " + err);
-            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+    priceService.getTestPrice(modal,function(err,status,price){
+        if(err){
+            logger.error("Error in get test price (add())"+err);
+            return cb(err, status);
         }
-        var order_item_id = result.insertId;
-        modal.order_item_id = order_item_id;
-        self.addOrderItemStatus(modal,function(err, code, statusResult){
-            if(err){
-                logger.error("Error in add order item status (add()) " + err);
-                return cb(err, code);
+        modal.price = price;
+        orderItemDao.add(modal, function (err, result) {
+            if (err) {
+                logger.error("Error in add order item (add()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
             }
-            return cb(null, responseCodes.SUCCESS, result); 
+            var order_item_id = result.insertId;
+            modal.order_item_id = order_item_id;
+            self.addOrderItemStatus(modal,function(err, code, statusResult){
+                if(err){
+                    logger.error("Error in add order item status (add()) " + err);
+                    return cb(err, code);
+                }
+                return cb(null, responseCodes.SUCCESS, result); 
+            });
         });
     });
 };

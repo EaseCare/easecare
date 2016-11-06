@@ -62,4 +62,31 @@ PaymentService.prototype.createOrderAddress = function (modal, cb) {
     });
 }
 
+PaymentService.prototype.applyCoupon = function(modal, cb){
+    logger.info("apply coupen to order service called (applyCoupon())");
+    self.getCoupon(modal, function(err, couponResult){
+        if(err){
+            logger.error("Error getting coupon (applyCoupon()) "+err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(couponResult){
+            var discount_amount = couponResult[0].discount;
+            self.isAlreadyUsed (modal, function(err,status,couponResult){
+                if(err){
+                    logger.error("Error getting User detail for Used coupon (applyCoupon()) "+err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                if(couponResult && couponResult.length>0){
+                    logger.debug("Coupon Code Already Used (applyCoupon())");
+                    return cb(messages.usedCoupon, responseCodes.FORBIDDEN);
+                }else{
+                    
+                }
+            })
+        }else{
+            logger.debug("Wrong Coupon Code (applyCoupon())");
+            return cb(messages.invalidCoupon, responseCodes.FORBIDDEN);
+        }
+    });
+}
 module.exports = PaymentService;

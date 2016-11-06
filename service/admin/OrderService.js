@@ -23,24 +23,39 @@ OrderService.prototype.add = function (modal, cb) {
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
         modal.order_id = result.insertId;
-        orderItemService.add(modal, function(err,status,result){
+        self.addUpdateOrderPrice(modal, function(err, status, addPriceResult){
             if(err){
-                logger.error("error adding order item (add())"+err);
-                return cb(err,status);
+                logger.debug("Error adding order price (add())"+err)
+                return cb(err,responseCodes.INTERNAL_SERVER_ERROR)     
             }
-            paymentService.createOrderPayment(modal, function(err,status, result){
+            orderItemService.add(modal, function(err,status,result){
                 if(err){
-                    logger.error("error adding order payment (add())"+err);
+                    logger.error("error adding order item (add())"+err);
                     return cb(err,status);
                 }
-                return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
-            });
-        });  
+                paymentService.createOrderPayment(modal, function(err,status, result){
+                    if(err){
+                        logger.error("error adding order payment (add())"+err);
+                        return cb(err,status);
+                    }
+                    return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+                });
+            }); 
+        }); 
     });
 };
 /*********************************Get List End************************************************/
 
-
+OrderService.prototype.addUpdateOrderPrice = function(modal, cb){
+    logger.info("Add update order price service called (addUpdateOrderPrice())");
+    orderDao.addUpdateOrderPrice(modal,function(err, result){
+        if(err){
+            logger.debug("Error adding order price (addUpdateOrderPrice())"+err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null, responseCodes.SUCCESS, result);
+    })
+}
 
 
 module.exports = OrderService;

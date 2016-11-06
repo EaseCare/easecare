@@ -45,9 +45,9 @@ TestResponser.prototype.getTraceTestResponse = function (test_list) {
     var test_response_array = [];
     var temp_map = {};
     test_list.forEach(function(test){
-        if(test.id in temp_map){
+        if(test.order_id in temp_map){
             logger.debug("here");
-            var temp = temp_map[test.id];
+            var temp = temp_map[test.order_id];
             var prev_status_object = temp.test_status;
             var key = test.order_item_status_name;
             var status_object = {
@@ -69,9 +69,6 @@ TestResponser.prototype.getTraceTestResponse = function (test_list) {
             lab_info.id = test.lab_id;
             lab_info.name = test.lab_name;
             lab_info.address =lab_address;
-            var test_info = {};
-            test_info.id = test.test_id;
-            test_info.name = test.test_name;
             var test_status = {};
             var key = test.order_item_status_name;
             var status_object = {
@@ -80,7 +77,9 @@ TestResponser.prototype.getTraceTestResponse = function (test_list) {
             };
             test_status[key] = status_object;
             var test_response = {};
-            test_response.id = test.id;
+            test_response.id = test.test_id;
+            test_response.name = test.test_name;
+            test_response.order_id = test.order_id
             test_response.appointment_date = test.appointment_date;
             test_response.user_name = test.full_name;
             test_response.user_address = test.order_address;
@@ -88,7 +87,7 @@ TestResponser.prototype.getTraceTestResponse = function (test_list) {
             test_response.test_info = test_info;
             test_response.test_status = test_status;
             test_response_array.push(test_response);
-            temp_map[test.id] = test_response;
+            temp_map[test.order_id] = test_response;
         }     
     });
     return test_response_array;
