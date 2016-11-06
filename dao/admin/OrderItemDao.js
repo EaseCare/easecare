@@ -9,7 +9,7 @@ var utilDao = require('dao/util/UtilDao.js');
 var OrderItemDao = function () { }
 
 OrderItemDao.prototype.add = function(data, cb){
-    logger.debug("Create order item dao call start (add())");
+    logger.debug("Create order item dao call start (add())"+JSON.stringify(data));
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
         status_id: data.status_id||1,
@@ -29,8 +29,10 @@ OrderItemDao.prototype.add = function(data, cb){
     
     var mySqlQuery = connection.query(query, [queryData], function (err, resultSet) {
         if (err) {
+            logger.error("Error in adding item to cart "+err);
             return cb(err);
         }
+        logger.debug("Result adding item to cart "+resultSet);
         return cb(null, resultSet);
     });
     logger.debug("create order item query = " + mySqlQuery.sql);
