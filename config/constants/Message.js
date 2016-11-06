@@ -10,7 +10,7 @@ module.exports = {
     testPriceNotAvailable: 'Test price for this lab not available in system',
     usedCoupon: 'Coupon Code is already used',
     invalidCoupon: 'Coupon Code is not valid',
-    testNotFound: 'Test not found in application',
+    orderItemNotFound: 'Order Item not found in application',
     jsonParserError: 'Invalid Json response, please verify data',
     redisDeleteError: 'Error occured in redis Delete operation',
     redisPutError: 'Error occured in redis Put operation',

@@ -84,7 +84,7 @@ TestService.prototype.getTraceTest = function(data, cb){
         if(traceTestResponse && traceTestResponse.length>0){
             return cb(null, responseCodes.SUCCESS, traceTestResponse[0]);
         }else{
-            return cb(messages.testNotFound,responseCodes.NOT_FOUND);
+            return cb(messages.orderItemNotFound,responseCodes.NOT_FOUND);
         }
     });
 }
