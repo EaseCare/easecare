@@ -119,7 +119,7 @@ ShoppingCartService.prototype.getCartResponseObject = function (entities) {
         labData.image = entity.lab_image;
         labData.address = address;
         labData.top_review = topReview;
-
+        responseObject.order_item_id = entity.id
         responseObject.testData = testData;
         responseObject.labData = labData;
         responseList.push(responseObject);
@@ -159,23 +159,26 @@ ShoppingCartService.prototype.removeUserCart = function(modal,cb){
         }
     });
 }
-ShoppingCartService.prototype.remove = function(modal,cb){
+ShoppingCartService.prototype.removeUserCartItem = function(modal,cb){
     logger.info("ShoppingCart remove cart item service called (remove())");
     shoppingCartDao.getCartOrder(modal, function (err, result) {
         if (err) {
             logger.error("Error in get cart order(remove()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-        var order_id = null;
         if (result && result.length > 0) {
-            order_id = result[0].id;
-            modal.order_id = order_id;
-            shoppingCartDao.remove(modal, function (err, result) {
+            modal.id = modal.order_item_id ;
+            shoppingCartDao.removeUserCartOrderItem(modal, function (err, result) {
                 if (err) {
                     logger.error("Error in remove shoppingCart (remove()) " + err);
                     return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
                 }
-                return cb(null,responseCodes.SUCCESS,{message:messages.cartItemRemove});
+                logger.debug("the remove object"+JSON.stringify(result));
+                if(result.affectedRows>0){
+                    return cb(null,responseCodes.SUCCESS,{message:messages.cartItemRemove});
+                }else{
+                    return cb(messages.orderItemNotFoundInCart, responseCodes.NOT_FOUND);
+                }
             });
         }else{
             logger.debug("user cart is already empty (remove())");

@@ -7,6 +7,7 @@ var responseCodes = config.responseCode;
 var messages = config.messages;
 var orderItemDao = new (require('dao/admin/OrderItemDao.js'))();
 var utilService = new (require('service/util/UtilService.js'))();
+var priceService = new (require('service/admin/PriceService.js'))();
 var OrderItemService = function () { };
 
 /*********************************Get List Start************************************************/

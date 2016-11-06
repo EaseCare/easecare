@@ -29,7 +29,7 @@ app.post('/', function (req, res) {
 
 app.delete('/', function(req, res) {
     logger.info("Delete ShoppingCart Item request received");
-    shoppingCartService.remove(req.body, function (err, status, data) {
+    shoppingCartService.removeUserCartItem(req.body, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

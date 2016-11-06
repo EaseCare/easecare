@@ -12,7 +12,7 @@ var ShoppingCartDao = function () { }
 ShoppingCartDao.prototype.getList = function (data, cb) {
     logger.debug("shoppingCart get list method call start (getList())");
     var query = [];
-    query.push(" select oi.test_id,oi.lab_id,o.user_id,oi.created_date as cart_date ");
+    query.push(" select oi.id,oi.test_id,oi.lab_id,o.user_id,oi.created_date as cart_date ");
     query.push(" ,o.id AS order_id,t.name as test_name ");
     query.push(" ,l.name as lab_name,i.path as lab_image ");
     query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
@@ -77,7 +77,7 @@ ShoppingCartDao.prototype.addOrderItem = function (data, cb) {
     });
     logger.debug("shoppindCart add query = " + mySqlQuery.sql);
 }
-ShoppingCartDao.prototype.remove = function (data, cb) {
+/*ShoppingCartDao.prototype.remove = function (data, cb) {
     logger.debug("shoppingCart remove method call start (add())");
     var date = utilDao.getMySqlFormatDateTime(null);
 
@@ -92,7 +92,7 @@ ShoppingCartDao.prototype.remove = function (data, cb) {
         return cb(null, resultSet);
     });
     logger.debug("shoppindCart remove query = " + mySqlQuery.sql);
-}
+}*/
 ShoppingCartDao.prototype.getCartOrder = function(data, cb){
     logger.debug("Get order info method call start (getCartOrder())");
     var query = [];
@@ -136,10 +136,10 @@ ShoppingCartDao.prototype.createCartOrder = function(data, cb){
 ShoppingCartDao.prototype.removeUserCartOrderItem = function(data, cb){
     logger.debug("Remove user cart order item (removeUserCartOrderItem())");
     var query = [];
-    query.push(" Delete from `order_item` WHERE order_id = ? ");
+    query.push(" Delete from `order_item` WHERE id = ? ");
     query = query.join(" ");
     
-    var mySqlQuery = connection.query(query,[data.order_id], function (err, resultSet) {
+    var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
         if (err) {
             return cb(err);
         }

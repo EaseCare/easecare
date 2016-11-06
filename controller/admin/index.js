@@ -8,4 +8,5 @@ app.use('/shoppingcart',require('./ShoppingCartController.js'));
 app.use('/payment',require('./PaymentController.js'));
 app.use('/orders',require('./OrderController.js'));
 app.use('/offers',require('./OfferController.js'));
+app.use('/organization',require('./OrganizationController.js'));
 module.exports = app;
