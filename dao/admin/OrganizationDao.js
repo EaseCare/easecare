@@ -13,7 +13,7 @@ OrganizationDao.prototype.get = function (data, cb) {
     var query = [];
     
     query.push(" SELECT o.id,o.name ");
-    query.push(" ,o.email,o.address,o.website ");
+    query.push(" ,o.email,o.contact_number,o.address,o.website ");
     query.push(" FROM organization as o ");
     query = query.join("");
 

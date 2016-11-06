@@ -59,4 +59,19 @@ OrderItemDao.prototype.addOrderItemStatus = function(data, cb){
     logger.debug("create order item status query = " + mySqlQuery.sql);
     
 }
+OrderItemDao.prototype.removeOrderItemStatus = function(data, cb){
+    logger.debug("Remove order item status (removeOrderItemStatus())");
+    
+    var query = [];
+    query.push(" Delete from `order_item_status_change` WHERE order_item_id = ? ");
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("remove order item status query = " + mySqlQuery.sql);
+}
 module.exports = OrderItemDao;

@@ -6,7 +6,7 @@ var logger = require('helper/Logger.js')(moduleName);
 
 var connection = require('service/mysql/Pool.js');
 var utilDao = require('dao/util/UtilDao.js');
-
+var orderItemDao = new (require('dao/admin/OrderItemDao.js'))();
 var ShoppingCartDao = function () { }
 
 ShoppingCartDao.prototype.getList = function (data, cb) {
@@ -135,17 +135,23 @@ ShoppingCartDao.prototype.createCartOrder = function(data, cb){
 }
 ShoppingCartDao.prototype.removeUserCartOrderItem = function(data, cb){
     logger.debug("Remove user cart order item (removeUserCartOrderItem())");
-    var query = [];
-    query.push(" Delete from `order_item` WHERE id = ? ");
-    query = query.join(" ");
-    
-    var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
+    orderItemDao.removeOrderItemStatus(data,function(err,result){
         if (err) {
             return cb(err);
         }
-        return cb(null, resultSet);
+        var query = [];
+        query.push(" Delete from `order_item` WHERE id = ? ");
+        query = query.join(" ");
+        
+        var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
+            if (err) {
+                return cb(err);
+            }
+            return cb(null, resultSet);
+        });
+        logger.debug("remove user cart order item query = " + mySqlQuery.sql);
     });
-    logger.debug("remove user cart order item query = " + mySqlQuery.sql);
+    
 }
 
 ShoppingCartDao.prototype.removeUserCartOrder = function(data, cb){
