@@ -38,13 +38,14 @@ PaymentService.prototype.createOrderPayment = function (modal, cb) {
                 logger.error("Error in create order address (createOrderPayment()) " + err);
                 return cb(err,status);
             }
-            shoppingCartService.removeUserCart(modal,function(err,status,result){
+             return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+            /*shoppingCartService.removeUserCart(modal,function(err,status,result){
                if(err){
                 logger.error("Error in remove user cart (createOrderPayment()) " + err);
                 return cb(err,status);
                 }
                 return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});  
-            });
+            });*/
         });
     });
 }
