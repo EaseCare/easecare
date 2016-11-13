@@ -61,7 +61,7 @@ ShoppingCartService.prototype.add = function (modal, cb) {
                 }
                 order_id = result.insertId;
                 modal.order_id = order_id;
-                orderItemService.addOrderItem(modal,function(err, code, orderItemOutput){
+                orderItemService.add(modal,function(err, code, orderItemOutput){
                     if(err){
                         logger.error("Error in add order item to cart(add()) " + err);
                         return cb(err, code);
@@ -187,4 +187,14 @@ ShoppingCartService.prototype.removeUserCartItem = function(modal,cb){
     });
 }
 
+ShoppingCartService.prototype.completeCart = function(modal, cb){
+    logger.info("Complete user cart service called (completeCart())");
+    shoppingCartDao.completeCart(modal, function(err, result){
+       if(err){
+         logger.error("Eror in complete user cart (completeCart())"+err);
+         return cb(err, responseCodes.INTERNAL_SERVER_ERROR);  
+       } 
+       return cb(null, responseCodes.SUCCESS, result);
+    });
+}
 module.exports = ShoppingCartService;

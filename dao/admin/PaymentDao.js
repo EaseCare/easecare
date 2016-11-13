@@ -23,7 +23,30 @@ PaymentDao.prototype.getList = function (data, cb) {
     });
     logger.debug("payment get query = " + mySqlQuery.sql);
 }
+PaymentDao.prototype.getOrdersPayment = function(data, cb){
+    logger.debug("Get Order Payment dao call start (getOrdersPayment())");
+    
+    var query = [];
+    query.push(" SELECT ");  
+    query.push(" o.id as order_id, o.created_date as order_date  ");
+    query.push(" ,if(o.is_cart = 0,0,1) as is_cart  ");
+    query.push(" ,if(op.id is null,'NOT_PAID','PAID') as payment_status ");
+    query.push(" ,op.amount as payment_price ");
+    query.push(" ,p.name as payment_mode ");
+    query.push(" From `order` as o ");  
+    query.push(" left join order_payment as op on op.order_id = o.id ");
+    query.push(" left join payment as p on p.id = op.payment_id ")
+    query.push(" where o.user_id = ? ");
+    query = query.join("");
 
+    var mySqlQuery = connection.query(query,[data.logged_in_user.user_id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("create order payment query = " + mySqlQuery.sql);
+}
 PaymentDao.prototype.createOrderPayment = function (data, cb) {
     logger.debug("order payment create method call start (createOrderPayment())");
     var date = utilDao.getMySqlFormatDateTime(null);
@@ -40,7 +63,6 @@ PaymentDao.prototype.createOrderPayment = function (data, cb) {
     var query = [];
     query.push(" INSERT INTO order_payment SET ? ");
     query = query.join("");
-
 
     var mySqlQuery = connection.query(query,[queryData], function (err, resultSet) {
         if (err) {

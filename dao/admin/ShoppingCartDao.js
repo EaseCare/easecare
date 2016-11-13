@@ -169,4 +169,18 @@ ShoppingCartDao.prototype.removeUserCartOrder = function(data, cb){
     logger.debug("remove user cart order query = " + mySqlQuery.sql);
 }
 
+ShoppingCartDao.prototype.completeCart = function(data, cb){
+    logger.debug("Complete user cart order (completeCart())");
+    var query = [];
+    query.push(" Update `order` SET is_cart = 2 WHERE is_cart = 1 AND user_id = ?");
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query,[data.logged_in_user.user_id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("complete user cart order query = " + mySqlQuery.sql);
+}
 module.exports = ShoppingCartDao;

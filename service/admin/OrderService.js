@@ -33,7 +33,7 @@ OrderService.prototype.add = function (modal, cb) {
                     logger.error("error adding order item (add())"+err);
                     return cb(err,status);
                 }
-                paymentService.createOrderPayment(modal, function(err,status, result){
+                paymentService.createDirectOrderPayment(modal, function(err,status, result){
                     if(err){
                         logger.error("error adding order payment (add())"+err);
                         return cb(err,status);

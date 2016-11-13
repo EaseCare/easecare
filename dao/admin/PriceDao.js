@@ -15,10 +15,11 @@ LabDao.prototype.getTestPrice = function (data, cb) {
     query.push(" FROM lab_test as lt ");
     query.push(" INNER JOIN lab as l on l.id = lt.lab_id ");
     query.push(" INNER JOIN test as t on t.id = lt.test_id ");
+    query.push(" WHERE l.id = ? And t.id = ? ")
     query = query.join("");
 
 
-    var mySqlQuery = connection.query(query, function (err, resultSet) {
+    var mySqlQuery = connection.query(query,[data.lab_id, data.test_id], function (err, resultSet) {
         if (err) {
             return cb(err);
         }

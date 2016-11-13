@@ -76,4 +76,32 @@ OrderItemDao.prototype.removeOrderItemStatus = function(data, cb){
     });
     logger.debug("remove order item status query = " + mySqlQuery.sql);
 }
+OrderItemDao.prototype.getOrderItemStatus = function(data, cb){
+    logger.debug("Get order item status dao service called (getOrderItemStatus())");
+    
+    var query = [];
+    query.push(" select "); 
+    query.push(" oi.id as order_item_id "); 
+    query.push(" ,t.name as test_name ");
+    query.push(" ,l.name as lab_name ");
+    query.push(" ,ois.name as test_state ");
+    query.push(" ,oisc.created_date as test_state_created_date ");
+    query.push(" from order_item as oi "); 
+    query.push(" inner join `order` as o on o.id = oi.order_id "); 
+    query.push(" inner join test as t on t.id = oi.test_id ");
+    query.push(" inner join lab as l on l.id = oi.lab_id ");
+    query.push(" inner join order_item_status_change as oisc on oi.id = oisc.order_item_id and oisc.status_id = oi.status_id ");
+    query.push(" inner join order_item_status as ois on ois.id = oi.status_id ");
+    query.push(" where o.user_id = ? ");
+    
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query,[data.logged_in_user.user_id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("Get order item status query = " + mySqlQuery.sql);
+}
 module.exports = OrderItemDao;

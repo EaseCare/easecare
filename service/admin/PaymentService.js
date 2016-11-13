@@ -38,18 +38,34 @@ PaymentService.prototype.createOrderPayment = function (modal, cb) {
                 logger.error("Error in create order address (createOrderPayment()) " + err);
                 return cb(err,status);
             }
-             return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
-            /*shoppingCartService.removeUserCart(modal,function(err,status,result){
+            shoppingCartService.completeCart(modal,function(err,status,result){
                if(err){
-                logger.error("Error in remove user cart (createOrderPayment()) " + err);
+                logger.error("Error in complete user cart (createOrderPayment()) " + err);
                 return cb(err,status);
                 }
                 return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});  
-            });*/
+            });
         });
     });
 }
-
+PaymentService.prototype.createDirectOrderPayment = function (modal, cb) {
+    logger.info("createOrderPayment service called (createOrderPayment())");
+    var self = this;
+ 
+    paymentDao.createOrderPayment(modal, function(err,result){
+        if (err) {
+            logger.error("Error in create order payment (createOrderPayment()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        self.createOrderAddress(modal,function(err,status,result){
+            if(err){
+                logger.error("Error in create order address (createOrderPayment()) " + err);
+                return cb(err,status);
+            }
+             return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});
+        });
+    });
+}
 PaymentService.prototype.createOrderAddress = function (modal, cb) {
     logger.info("createOrderAddress service called (createOrderAddress())");
     var self = this;
@@ -61,6 +77,19 @@ PaymentService.prototype.createOrderAddress = function (modal, cb) {
         }
         return cb(null, responseCodes.SUCCESS, result);
     });
+}
+
+PaymentService.prototype.getOrdersPayment = function(modal, cb){
+    logger.info("Get order payment service called (getOrdersPayment())");
+    var self = this;
+ 
+    paymentDao.getOrdersPayment(modal, function(err,result){
+        if (err) {
+            logger.error("Error in get order payment (getOrdersPayment()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null, responseCodes.SUCCESS, result);
+    });    
 }
 
 PaymentService.prototype.applyCoupon = function(modal, cb){

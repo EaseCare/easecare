@@ -11,11 +11,20 @@ var responseCodes = config.responseCode;
 
 var OrderService = require('service/admin/OrderService.js');
 var orderService = new OrderService();
+var OrderItemService = require('service/admin/OrderItemService.js');
+var orderItemService = new OrderItemService();
 
 
 app.post('/', function (req, res) {
     logger.info("Get Category list request received");
     orderService.add(req.body, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
+
+app.get('/items', function (req, res) {
+    logger.info("Get Order Item list request received");
+    orderItemService.getOrderItemStatus(req.body, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

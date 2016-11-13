@@ -27,4 +27,11 @@ app.post('/', function (req, res) {
     });
 });
 
+app.get('/orders', function (req, res) {
+    logger.info("Get Order Payment list request received");
+    paymentService.getOrdersPayment(req.body, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
+
 module.exports = app;

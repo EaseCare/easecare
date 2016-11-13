@@ -50,7 +50,16 @@ OrderItemService.prototype.addOrderItemStatus = function (modal, cb) {
         return cb(null, responseCodes.SUCCESS, result); 
     });
 }
-
+OrderItemService.prototype.getOrderItemStatus = function (modal, cb) {
+    logger.info("Get order item status service called (getOrderItemStatus())");
+    orderItemDao.getOrderItemStatus(modal, function (err, result) {
+        if (err) {
+            logger.error("Error in get order item status (getOrderItemStatus()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null, responseCodes.SUCCESS, result); 
+    });
+}
 
 
 module.exports = OrderItemService;
