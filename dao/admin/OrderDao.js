@@ -58,4 +58,20 @@ OrderDao.prototype.addUpdateOrderPrice = function(data, cb){
     });
     logger.debug("add update order price query = " + mySqlQuery.sql);
 }
+
+OrderDao.prototype.getDetail = function(data, cb){
+    logger.debug("Get order detail screen dao call start (getDetail())");
+    
+    var query = [];
+    query.push(" ");
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query, [queryData,queryData], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("get order detail query = " + mySqlQuery.sql);
+}
 module.exports = OrderDao;

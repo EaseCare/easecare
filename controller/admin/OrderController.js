@@ -28,7 +28,12 @@ app.get('/items', function (req, res) {
         return response(err, status, data, res);
     });
 });
-
+app.get('/:id', function(req, res){
+    logger.info("Get order detail request received");
+    orderService.getDetail(req.body, function(err, status, data){
+       return response(err, status, data, res); 
+    });
+})
 
 
 module.exports = app;

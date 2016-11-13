@@ -9,5 +9,6 @@ module.exports  = mysql.createPool({
   host            : connectionProperties.host,
   user            : connectionProperties.user,
   password        : connectionProperties.password,
-  database        : connectionProperties.database
+  database        : connectionProperties.database,
+  dateStrings: true
 });

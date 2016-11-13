@@ -32,7 +32,7 @@ PaymentDao.prototype.getOrdersPayment = function(data, cb){
     query.push(" ,if(o.is_cart = 0,0,1) as is_cart  ");
     query.push(" ,if(op.id is null,'NOT_PAID','PAID') as payment_status ");
     query.push(" ,op.amount as payment_price ");
-    query.push(" ,p.name as payment_mode ");
+    query.push(" ,p.id as payment_mode ");
     query.push(" From `order` as o ");  
     query.push(" left join order_payment as op on op.order_id = o.id ");
     query.push(" left join payment as p on p.id = op.payment_id ")
