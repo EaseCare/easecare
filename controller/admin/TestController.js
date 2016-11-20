@@ -54,10 +54,12 @@ app.get('/trace', function (req,res) {
 app.get('/trace/:id', function (req,res) {
     logger.info("Get Test labs request received");
     var data = req.body;
+    var host = req.headers.host;
     data.order_item_id = req.params.id;
     testService.getTraceTest(data, function (err, status, data) {
+        var serverPath = req.headers.host;
+        data.reportPath = serverPath+data.reportPath;
         return response(err, status, data, res);
     });
 });
-
 module.exports = app;

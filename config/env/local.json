@@ -2,10 +2,10 @@
 	"orion": {
 		"db": {
 			"connectionLimit": 10,
-			"host": "52.42.222.93",
+			"host": "localhost",
 			"user": "root",
 			"password": "paxcel@123",
-			"database": "easecare",
+			"database": "easeCare",
 			"restoreNodeTimeout" : 10
 		},
 		"redis" : {
@@ -22,6 +22,10 @@
 		"allowed-origins": true,
 		"req-logger": "dev"
 	},
+	"reports":{
+		"baseDir":"/reports/",
+		"extension":".pdf"
+	}, 
 	"port" : 3000,
 	"sessionsecret" : "orioneclipse",
 	"log-level" : "debug",

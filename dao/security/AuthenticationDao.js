@@ -9,7 +9,7 @@ var connection = require('service/mysql/Pool.js');
 var AuthenticationDao = function () { }
 
 AuthenticationDao.prototype.logIn = function(data, cb) {
-    logger.debug("login dao method call start");
+    logger.debug("login dao method call start"+JSON.stringify(data));
     
     var identifier = null;
     if(data.email){

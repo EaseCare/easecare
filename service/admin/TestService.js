@@ -8,6 +8,8 @@ var messages = config.messages;
 var testDao = new (require('dao/admin/TestDao.js'))();
 var testResponser = new (require('responser/TestResponser.js'))();
 var TestService = function () { };
+var envProp = config.env.prop;
+var fileGenerator =  require('helper/PDFGenerator.js');
 
 /*********************************Get List Start************************************************/
 TestService.prototype.getList = function (modal, cb) {
@@ -82,6 +84,12 @@ TestService.prototype.getTraceTest = function(data, cb){
         }
         var traceTestResponse = testResponser.getTraceTestResponse(entities);
         if(traceTestResponse && traceTestResponse.length>0){
+            var time = new Date().getTime();
+            var order_item_id = traceTestResponse[0].order_item_id;
+            var fileName = time+order_item_id+envProp.reports.extension;
+            var filePath = envProp.reports.baseDir+fileName;
+            traceTestResponse[0].reportPath = filePath;
+            fileGenerator.genratePdf(traceTestResponse[0]);
             return cb(null, responseCodes.SUCCESS, traceTestResponse[0]);
         }else{
             return cb(messages.orderItemNotFound,responseCodes.NOT_FOUND);
