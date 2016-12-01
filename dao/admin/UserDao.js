@@ -62,7 +62,7 @@ UserDao.prototype.getDetail = function (data, cb) {
 }
 
 UserDao.prototype.add = function (data, cb) {
-    logger.debug("user add call start (add())");
+    logger.debug("user add call start (add())"+JSON.stringify(data));
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
         first_name: data.first_name,
@@ -70,9 +70,7 @@ UserDao.prototype.add = function (data, cb) {
         date_of_birth: data.date_of_birth,
         gender: data.gender,
         created_date: date,
-        edited_date: date,
-        created_by: data.logged_in_user.user_id,
-        edited_by: data.logged_in_user.user_id
+        edited_date: date
     }
     var query = [];
     query.push(" insert into user set ? ");
@@ -129,8 +127,8 @@ UserDao.prototype.addUserLogin = function (data, cb) {
         password: data.password,
         created_date: date,
         edited_date: date,
-        created_by: data.logged_in_user.user_id,
-        edited_by: data.logged_in_user.user_id
+        created_by: data.user_id,
+        edited_by: data.user_id
     }
     var query = [];
     query.push(" insert into user_login set ? ");
