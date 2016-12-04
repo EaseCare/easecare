@@ -3,6 +3,7 @@
 var moduleName = __filename;
 var logger = require('helper/Logger.js')(moduleName);
 var config = require('config');
+var fileUtil = require('helper/FileUtil.js');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var testDao = new (require('dao/admin/TestDao.js'))();
@@ -84,13 +85,20 @@ TestService.prototype.getTraceTest = function(data, cb){
         }
         var traceTestResponse = testResponser.getTraceTestResponse(entities);
         if(traceTestResponse && traceTestResponse.length>0){
-            var time = new Date().getTime();
+            //var time = new Date().getTime();
             var order_item_id = traceTestResponse[0].order_item_id;
-            var fileName = time+order_item_id+envProp.reports.extension;
+           // var fileName = time+order_item_id+envProp.reports.extension;
+           var fileName = order_item_id;
             var filePath = envProp.reports.baseDir+fileName;
-            traceTestResponse[0].reportPath = filePath;
-            fileGenerator.genratePdf(traceTestResponse[0]);
-            return cb(null, responseCodes.SUCCESS, traceTestResponse[0]);
+            fileUtil.isFileExist(envProp.reports.baseDir, fileName, function(err, result){
+                console.log("result is"+result);
+                if(result === -1){
+                    traceTestResponse[0].reportPath = null;
+                }else{
+                    traceTestResponse[0].reportPath = filePath;
+                }
+                return cb(null, responseCodes.SUCCESS, traceTestResponse[0]);
+            });
         }else{
             return cb(messages.orderItemNotFound,responseCodes.NOT_FOUND);
         }

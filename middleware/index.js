@@ -33,7 +33,7 @@ module.exports = function(app){
 	app.use(bodyParser.urlencoded({extended:true}));
 	
 	app.use(function(err, req, res, next){
-			logger.error(err);
+			logger.error("Error got here"+err);
 			return responseController(messages.internalServerError, responseCodes.BAD_REQUEST, null, res);			
 	});
 

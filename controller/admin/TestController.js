@@ -5,6 +5,7 @@ var config = require('config');
 var response = require('controller/ResponseController.js');
 var moduleName = __filename;
 var logger = require("helper/Logger.js")(moduleName);
+var fileUpload = require("helper/FileUploader.js");
 var constants = config.orionConstants;
 var messages = config.messages;
 var responseCodes = config.responseCode;
@@ -56,10 +57,16 @@ app.get('/trace/:id', function (req,res) {
     var data = req.body;
     var host = req.headers.host;
     data.order_item_id = req.params.id;
-    testService.getTraceTest(data, function (err, status, data) {
+    testService.getTraceTest(data, function (err, status, result) {
         var serverPath = req.headers.host;
-        data.reportPath = serverPath+data.reportPath;
-        return response(err, status, data, res);
+        if(result && result.lenth>0 && result.reportPath){
+            result.reportPath = serverPath+result.reportPath;
+        }
+        return response(err, status, result, res);
     });
+});
+
+app.post('/report/:id',fileUpload.single('file'), function(req,res){
+    return response(null, 200, {message:"Report uploaded successfully"}, res);
 });
 module.exports = app;
