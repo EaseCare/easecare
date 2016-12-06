@@ -51,7 +51,9 @@ UserService.prototype.add = function (data, cb) {
     logger.info("User add service called (add())");
     var self = this;
     var dob = data.date_of_birth;
-    data.date_of_birth = utilService.formatDate(dob);
+    if(dob){
+        data.date_of_birth = utilService.formatDate(dob);
+    }
     userDao.add(data, function (err, addUserresult) {
         if (err) {
             logger.error("Error in add user (add()) " + err);

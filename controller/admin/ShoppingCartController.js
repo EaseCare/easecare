@@ -15,21 +15,21 @@ var shoppingCartService = new ShoppingCartService();
 
 app.get('/', function (req, res) {
     logger.info("Get ShoppingCart list request received");
-    shoppingCartService.getList(req.body, function (err, status, data) {
+    shoppingCartService.getList(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 
 app.post('/', function (req, res) {
     logger.info("Post ShoppingCart list request received");
-    shoppingCartService.add(req.body, function (err, status, data) {
+    shoppingCartService.add(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 
 app.delete('/', function(req, res) {
     logger.info("Delete ShoppingCart Item request received");
-    shoppingCartService.removeUserCartItem(req.body, function (err, status, data) {
+    shoppingCartService.removeUserCartItem(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

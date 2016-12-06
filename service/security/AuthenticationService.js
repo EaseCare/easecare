@@ -24,30 +24,59 @@ AuthenticationService.prototype.logIn = function (modal, cb) {
 			return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
 		}
 		if (entity && entity.length > 0) {
-			//genrate token and return it as well
-			tokenService.generateToken(entity, function (err, code, token) {
-				if (err) {
-					logger.error("Error in JWT token generation (logIn()) " + err);
-					return cb(err, code);
-				} else {
-					logger.info("JWT token generated successfully (logIn())");
-					var expire_time = parseInt(constants.token().exp);
-					sharedCache.put(token, JSON.stringify(entity[0]), function (err, data) {
-						
-						if (err) {
-							logger.error(err);
-							return cb(messages.internalServerError, responseCodes.INTERNAL_SERVER_ERROR);
-						} else {
-							logger.debug("Data put into shared cache" + data);
-							return cb(null, code, { id:entity[0].user_id,token: token });
-						}
-					}, expire_time);
-				}
+			self.genrateToken(entity, function(err, status, result){
+				return cb(err, status, result);
 			});
 		} else {
 			return cb(messages.wrongCredentials, responseCodes.UNAUTHORIZED);
 		}
 	});
+}
+AuthenticationService.prototype.genrateToken = function(entity, cb){
+	tokenService.generateToken(entity, function (err, code, token) {
+		if (err) {
+			logger.error("Error in JWT token generation (logIn()) " + err);
+			return cb(err, code);
+		} else {
+			logger.info("JWT token generated successfully (logIn())");
+			var expire_time = parseInt(constants.token().exp);
+			sharedCache.put(token, JSON.stringify(entity[0]), function (err, data) {	
+				if (err) {
+					logger.error(err);
+					return cb(messages.internalServerError, responseCodes.INTERNAL_SERVER_ERROR);
+				} else {
+					logger.debug("Data put into shared cache" + data);
+					return cb(null, code, { id:entity[0].user_id,token: token });
+				}
+			}, expire_time);
+		}
+	});
+}
+AuthenticationService.prototype.fbLogIn = function(data, cb){
+	var self = this;
+	data.email = data.facebook_id;
+	authenticationDao.fbLogIn(data, function (err, entity) {
+		if (err) {
+			logger.error("Error in authentication (fbLogIn()) " + err);
+			return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+		}
+		if (entity && entity.length > 0) {
+			self.genrateToken(entity, function(err, status, result){
+				return cb(err, status, result);
+			});
+		} else {
+			data.is_facebook = 1;
+			userService.add(data, function(err, status, result){
+				if(err){
+					return cb(err, status);
+				}
+				self.fbLogIn(data , function(err, status, result){
+					return cb(err, status, result);
+				})
+			})
+		}
+	});
+	
 }
 AuthenticationService.prototype.changePassword = function(data, cb){
 	logger.info("Authentication service  called (changePassword())");

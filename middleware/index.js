@@ -21,19 +21,19 @@ var logger = require('helper/Logger.js')(moduleName);
 
 module.exports = function(app){	
 	
-	app.use(function(req,res,next){
-		req.data = {};
-		next();
-	});
+	
 	app.use(cors(corsOptions));
 	app.use(morgan(morganOptions.format, morganOptions.options));
 	
 	app.use(bodyParser.json());
 	
 	app.use(bodyParser.urlencoded({extended:true}));
-	
+	app.use(function(req,res,next){
+		req.data = req.body;
+		next();
+	});
 	app.use(function(err, req, res, next){
-			logger.error("Error got here"+err);
+			logger.error(err);
 			return responseController(messages.internalServerError, responseCodes.BAD_REQUEST, null, res);			
 	});
 
@@ -57,7 +57,8 @@ module.exports = function(app){
 */
 	var apiWithoutAuthorization = [
 		new RegExp('\/v1\/security\/login', 'i'),
-		new RegExp('\/v1\/security\/signup', 'i')
+		new RegExp('\/v1\/security\/signup', 'i'),
+		new RegExp('\/v1\/security\/fblogin', 'i')
 	];
 
 	/*

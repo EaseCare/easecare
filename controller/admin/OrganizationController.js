@@ -15,7 +15,7 @@ var organizationService = new OrganizationService();
 
 app.get('/', function (req, res) {
     logger.info("Get Organization  request received");
-    organizationService.get(req.body, function (err, status, data) {
+    organizationService.get(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

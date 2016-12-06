@@ -43,8 +43,8 @@ exports.authorization = function() {
 							/*var cacheObject = localCache.get(req.data.reqId);
 							cacheObject.session = decoded;
 							decoded.token = token;*/
-							logger.debug("decoded user is"+JSON.stringify(decoded));
-							req.body.logged_in_user = {user_id: decoded.user_id};
+							req.data.logged_in_user = {user_id: decoded.user_id};
+							logger.debug("decoded user is"+JSON.stringify(decoded)+"re.body"+JSON.stringify(req.body));
 							sharedCache.get(token,  function(err, data){
 								if(err || !data){
 									logger.error("Error in isAuthorized (isAuthorized())" + err);

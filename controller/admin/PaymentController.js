@@ -15,21 +15,21 @@ var paymentService = new PaymentService();
 
 app.get('/', function (req, res) {
     logger.info("Get Payment list request received");
-    paymentService.getList(req.body, function (err, status, data) {
+    paymentService.getList(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 
 app.post('/', function (req, res) {
     logger.info("Create order Payment request received");
-    paymentService.createOrderPayment(req.body, function (err, status, data) {
+    paymentService.createOrderPayment(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 
 app.get('/orders', function (req, res) {
     logger.info("Get Order Payment list request received");
-    paymentService.getOrdersPayment(req.body, function (err, status, data) {
+    paymentService.getOrdersPayment(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

@@ -8,6 +8,21 @@ var connection = require('service/mysql/Pool.js');
 
 var AuthenticationDao = function () { }
 
+AuthenticationDao.prototype.fbLogIn = function(data, cb) {
+    logger.debug("fbLogIn dao method call start"+JSON.stringify(data));
+    
+    var query = [];
+    query.push("select * from user_login where email = ? AND is_facebook=1");
+    query = query.join("");
+    
+    var mySqlQuery = connection.query(query, [data.email], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("login query = "+mySqlQuery.sql);
+}
 AuthenticationDao.prototype.logIn = function(data, cb) {
     logger.debug("login dao method call start"+JSON.stringify(data));
     

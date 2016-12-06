@@ -15,7 +15,7 @@ var offerService = new OfferService();
 
 app.get('/', function (req, res) {
     logger.info("Get Offer list request received");
-    var data = req.body;
+    var data = req.data;
     offerService.getList(data, function (err, status, data) {
         return response(err, status, data, res);
     });

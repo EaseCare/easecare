@@ -56,21 +56,28 @@ var userService = new UserService();
  */
 
 app.post('/login', function (req, res) {
-    logger.info("Login request received"+req.body);
-    authenticationService.logIn(req.body, function (err, status, data) {
+    logger.info("Login request received"+JSON.stringify(req.data));
+    authenticationService.logIn(req.data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
+
+app.post('/fblogin', function (req, res) {
+    logger.info("fbLogin request received"+req.data);
+    authenticationService.fbLogIn(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 
 app.post('/signup', function (req, res) {
     logger.info("Add User login request received");
-    userService.add(req.body, function (err, status, data) {
+    userService.add(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 app.post('/changepassword', function (req, res) {
     logger.info("Change password request received");
-    authenticationService.changePassword(req.body, function (err, status, data) {
+    authenticationService.changePassword(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

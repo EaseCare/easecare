@@ -9,4 +9,5 @@ app.use('/payment',require('./PaymentController.js'));
 app.use('/orders',require('./OrderController.js'));
 app.use('/offers',require('./OfferController.js'));
 app.use('/organization',require('./OrganizationController.js'));
+app.use('/prescriptions',require('./PrescriptionController.js'));
 module.exports = app;

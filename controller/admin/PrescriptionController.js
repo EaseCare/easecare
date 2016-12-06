@@ -9,28 +9,24 @@ var constants = config.orionConstants;
 var messages = config.messages;
 var responseCodes = config.responseCode;
 
-var LabService = require('service/admin/LabService.js');
-var labService = new LabService();
+var PrescriptionService = require('service/admin/PrescriptionService.js');
+var prescriptionService = new PrescriptionService();
 
 
 app.get('/', function (req, res) {
-    logger.info("Get Lab list request received");
+    logger.info("Get Prescription list request received");
     var data = req.data;
-    data.test_id = req.query.test_id;
-    labService.getList(data, function (err, status, data) {
+    data.host = req.headers.host;
+    prescriptionService.getList(data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 
-
-app.get('/:id', function (req, res) {
-    logger.info("Get Lab detail request received");
-    var data = req.data;
-    data.id = req.query.id;
-    data.test_id = req.query.test_id;
-    labService.getDetail(req.data, function (err, status, data) {
+app.post('/', function(req,res){
+    logger.info("Add Prescription request received");
+    prescriptionService.addPrescription(req, res, function(err, status, data){
         return response(err, status, data, res);
-    });
+    })
 });
 
 module.exports = app;
