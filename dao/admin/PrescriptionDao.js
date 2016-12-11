@@ -38,7 +38,7 @@ PrescriptionDao.prototype.getList = function (data, cb) {
     logger.debug("Add prescription method call start (addPriscription())");
     
     var query = [];
-    query.push(" SELECT title,relative_path,created_date from user_prescription WHERE user_id = ? ");
+    query.push(" SELECT id,title,relative_path,created_date from user_prescription WHERE user_id = ? ");
     if(data.id){
         query.push(" AND id = ? ");
     }
