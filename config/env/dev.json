@@ -12,11 +12,23 @@
 			"host" :"localhost",
 			"port" : 6379
 		},
+		"mailer":{
+			"auth":{
+				"user":"easecarelabs@gmail.com",
+				"pass":"9910215720i"
+			},
+			"defaultFromAddress":"easecarelabs@gmail.com"	
+		},
 		"allowed-origins": true,
 		"req-logger": "dev"
 	},
+	"reports":{
+		"baseDir":"/reports/",
+		"extension":".pdf"
+	}, 
 	"port" : 3000,
 	"sessionsecret" : "orioneclipse",
 	"log-level" : "debug",
-	"logging-path" : "logs"
+	"logging-path" : "logs",
+	"uploaded-temp-path" : "reports/"
 }
