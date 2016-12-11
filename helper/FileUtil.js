@@ -26,3 +26,13 @@ module.exports.readDir = function(path, host, cb){
         return cb(null, fileArray);
     });
 }
+
+module.exports.makeDirIfNotExist = function(path, cb){
+     var pwd = __dirname;
+    var pathPre = pwd.split("/helper")[0];
+    var dirPath = pathPre+path;
+    if (!fs.existsSync(dirPath)){
+        fs.mkdirSync(dirPath);
+    }
+    return cb(null, dirPath);
+}

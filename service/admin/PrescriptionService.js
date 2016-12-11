@@ -40,7 +40,8 @@ PrescriptionService.prototype.addPrescription = function (req, res, cb) {
         var data = req.data;
         data.title = req.body.title;
         var baseDir = envProp.reports.baseDir;
-        data.relative_path = baseDir+req.data.logged_in_user.user_id+"/"+req.fileName;
+        fileUtil.makeDirIfNotExist(baseDir+req.data.logged_in_user.user_id,function(err,result){
+          data.relative_path = baseDir+req.data.logged_in_user.user_id+"/"+req.fileName;
         
         prescriptionDao.addPrescription(data, function(err, result){
             if(err){
@@ -55,7 +56,8 @@ PrescriptionService.prototype.addPrescription = function (req, res, cb) {
                 }
                 return cb(null, status, result[0]);
             });
-        });
+        });  
+        })
     }); 
 };
 

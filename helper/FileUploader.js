@@ -2,7 +2,7 @@
 var mkdirp = require("mkdirp");
 var fs = require("fs");
 var multer  = require('multer');
-
+var path = require("path");
 var config = require("config");
 
 var env = config.env;
@@ -21,7 +21,8 @@ var storage = multer.diskStorage({
         return cb(null, userDir);
 	},filename : function(req, file, cb){
         console.log("file"+JSON.stringify(file));
-        var fileName = Date.now()+"_"+file.originalname;
+        var tempName = (file.originalname).substring(0, 6)+path.extname(file.originalname);
+        var fileName = Date.now()+"_"+tempName;
         req.fileName = fileName;
 		return cb(null, fileName);
 	}
