@@ -31,12 +31,13 @@ PrescriptionService.prototype.getList = function (modal, cb) {
 PrescriptionService.prototype.addPrescription = function (req, res, cb) {
     logger.info("Add prescription service called (addPrescription())");
     var self = this;
-
+    console.log("the detail is"+JSON.stringify(req.headers));
     var fileUpload = fileStorage.single('file');
     fileUpload(req, res, function (err) {
         if (err) {
             return cb(err,responseCodes.INTERNAL_SERVER_ERROR);
         }
+        console.log("in file upload and req.filename is"+req.fileName);
         var data = req.data;
         data.title = req.body.title;
         var baseDir = envProp.reports.baseDir;
