@@ -6,6 +6,7 @@ var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var labDao = new (require('dao/admin/LabDao.js'))();
+var labResponser = new (require('responser/LabResponser.js'))();
 var LabService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -34,8 +35,12 @@ LabService.prototype.getListForTest = function (modal, cb) {
             logger.error("Error in get lab list for test (getListForTest()) " + err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
-        
-        return cb(null, responseCodes.SUCCESS, entities);
+        if(entities && entities.length>0){
+            var listForTestResponse = labResponser.getListForTestResponse(entities);
+            return cb(null, responseCodes.SUCCESS, listForTestResponse);
+        }else{
+            return cb(null, responseCodes.SUCCESS, []);
+        }
     });
 };
 /*********************************Get List For Test End************************************************/

@@ -42,8 +42,12 @@ LabDao.prototype.getListForTest = function(data, cb){
     query.push(" ,i.path as lab_image ");
     query.push(" ,a.address_line_1,a.address_line_2,a.landmark,a.city,a.state,a.latitude,a.longitude ");
     query.push(" ,sum(lt.price) as total_price ");
+    query.push(" ,GROUP_CONCAT(t.id,'') as test_ids ");
+    query.push(" ,GROUP_CONCAT(t.name,'') as test_name ");
+    query.push(" ,GROUP_CONCAT(lt.price,'') as test_price ");
     query.push(" FROM easecare.lab_test as lt ");
     query.push(" inner join lab as l on l.id = lt.lab_id ");
+    query.push(" inner join test AS t on t.id = lt.test_id ");
     query.push(" left join address as a on  l.address_id = a.id ");
     query.push(" left join image as i on l.image_id = i.id ");
     query.push(" where lt.test_id in(?) ");

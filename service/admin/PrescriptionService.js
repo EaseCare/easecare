@@ -17,6 +17,7 @@ PrescriptionService.prototype.getList = function (modal, cb) {
     prescriptionDao.getList(modal, function(err, result){
         if(err){
             logger.error("Error in get prescription list (getList())");
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
         var finalResult = [];
         result.forEach(function(prescription){
@@ -28,6 +29,22 @@ PrescriptionService.prototype.getList = function (modal, cb) {
     
 };
 /*********************************Get List End************************************************/
+
+PrescriptionService.prototype.deletePrescription = function(modal, cb){
+    logger.info("Delete prescription service called (deletePrescription())");
+    prescriptionDao.deletePrescription(modal, function(err, result){
+        if(err){
+            logger.error("Error in get prescription list (getList())");
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        logger.info("the delete id is"+JSON.stringify(result));
+        if(result.affectedRows > 0){
+            return cb(null, responseCodes.SUCCESS, {message:messages.prescriptionDeleted});
+        }
+        return cb(messages.prescriptionNotFound, responseCodes.NOT_FOUND);
+    })
+}
+
 PrescriptionService.prototype.addPrescription = function (req, res, cb) {
     logger.info("Add prescription service called (addPrescription())");
     var self = this;

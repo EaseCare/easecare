@@ -54,4 +54,20 @@ PrescriptionDao.prototype.getList = function (data, cb) {
     logger.debug("login query = " + mySqlQuery.sql);
 }
 
+PrescriptionDao.prototype.deletePrescription = function(data, cb){
+    logger.debug("Delete prescription method call start (deletePrescription())");
+    var query = [];
+    query.push(" Delete from user_prescription WHERE id = ? ");
+    query = query.join("");
+
+
+    var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        console.log("the result is"+JSON.stringify(resultSet));
+        return cb(null, resultSet);
+    });
+    //logger.debug("delete prescription query = " + mySqlQuery.sql);
+}
 module.exports = PrescriptionDao;

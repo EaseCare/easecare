@@ -12,6 +12,8 @@ module.exports = {
     invalidCoupon: 'Coupon Code is not valid',
     orderItemNotFound: 'Order Item not found in application',
     orderItemNotFoundInCart:'Order Item not found in shopping cart',
+    prescriptionNotFound:'Prescription Id not found',
+    prescriptionDeleted:'Prescription deleted successfully',
     jsonParserError: 'Invalid Json response, please verify data',
     redisDeleteError: 'Error occured in redis Delete operation',
     redisPutError: 'Error occured in redis Put operation',

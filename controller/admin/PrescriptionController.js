@@ -29,4 +29,14 @@ app.post('/', function(req,res){
     })
 });
 
+app.delete('/:id', function(req,res){
+    logger.info("Delete Prescription request received");
+    var data = req.data;
+    data.id = req.params.id;
+    prescriptionService.deletePrescription(data, function(err, status, data){
+        return response(err, status, data, res);
+    })
+});
+
+
 module.exports = app;
