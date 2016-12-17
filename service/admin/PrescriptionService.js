@@ -41,24 +41,29 @@ PrescriptionService.prototype.addPrescription = function (req, res, cb) {
         var data = req.data;
         data.title = req.body.title;
         var baseDir = envProp.reports.baseDir;
-        fileUtil.makeDirIfNotExist(baseDir+req.data.logged_in_user.user_id,function(err,result){
-          data.relative_path = baseDir+req.data.logged_in_user.user_id+"/"+req.fileName;
-        
-        prescriptionDao.addPrescription(data, function(err, result){
-            if(err){
-                logger.error("Error in add prescription service (addPrescription())");
-                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-            }
-            data.id = result.insertId;
-            data.host = req.headers.host;
-            self.getList(data, function(err, status, result){
+        if(req.fileName){
+            fileUtil.makeDirIfNotExist(baseDir+req.data.logged_in_user.user_id,function(err,result){
+            data.relative_path = baseDir+req.data.logged_in_user.user_id+"/"+req.fileName;
+            
+            prescriptionDao.addPrescription(data, function(err, result){
                 if(err){
-                    return cb(err, status);
+                    logger.error("Error in add prescription service (addPrescription())");
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
                 }
-                return cb(null, status, result[0]);
+                data.id = result.insertId;
+                data.host = req.headers.host;
+                self.getList(data, function(err, status, result){
+                    if(err){
+                        return cb(err, status);
+                    }
+                    return cb(null, status, result[0]);
+                });
+            });  
             });
-        });  
-        })
+        }else{
+            logger.info("File is not selected");
+            return cb("No File selected "+responseCodes.INTERNAL_SERVER_ERROR);
+        }
     }); 
 };
 

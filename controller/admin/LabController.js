@@ -22,15 +22,24 @@ app.get('/', function (req, res) {
     });
 });
 
+app.get('/tests', function(req, res){
+    logger.info("Get Lab detail request received");
+    var data = req.data;
+    data.test_ids = req.query.ids;
+    labService.getListForTest(data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
 
 app.get('/:id', function (req, res) {
     logger.info("Get Lab detail request received");
     var data = req.data;
     data.id = req.query.id;
     data.test_id = req.query.test_id;
-    labService.getDetail(req.data, function (err, status, data) {
+    labService.getDetail(data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
+
 
 module.exports = app;

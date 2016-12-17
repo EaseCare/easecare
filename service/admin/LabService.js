@@ -24,5 +24,20 @@ LabService.prototype.getList = function (modal, cb) {
 };
 /*********************************Get List End************************************************/
 
+/*********************************Get List For Test Start************************************************/
+LabService.prototype.getListForTest = function (modal, cb) {
+    logger.info("Lab get list for test service called (getListForTest())");
+    var self = this;
+
+    labDao.getListForTest(modal, function (err, entities) {
+        if (err) {
+            logger.error("Error in get lab list for test (getListForTest()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        
+        return cb(null, responseCodes.SUCCESS, entities);
+    });
+};
+/*********************************Get List For Test End************************************************/
 
 module.exports = LabService;

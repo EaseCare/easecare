@@ -29,4 +29,37 @@ LabDao.prototype.getList = function (data, cb) {
     logger.debug("lab list query = " + mySqlQuery.sql);
 }
 
+LabDao.prototype.getListForTest = function(data, cb){
+    logger.debug("Lab get list for test method call start (getListForTest())"+data.test_ids);
+    var count = 0;
+    var tests = []
+    if(data.test_ids){
+        tests = data.test_ids.split(",");
+        count = tests.length;
+    }
+    var query = [];
+    query.push(" SELECT l.id, l.name ");
+    query.push(" ,i.path as lab_image ");
+    query.push(" ,a.address_line_1,a.address_line_2,a.landmark,a.city,a.state,a.latitude,a.longitude ");
+    query.push(" ,sum(lt.price) as total_price ");
+    query.push(" FROM easecare.lab_test as lt ");
+    query.push(" inner join lab as l on l.id = lt.lab_id ");
+    query.push(" left join address as a on  l.address_id = a.id ");
+    query.push(" left join image as i on l.image_id = i.id ");
+    query.push(" where lt.test_id in(?) ");
+    query.push(" group by lt.lab_id ");
+    query.push(" having count(*) = ? ");
+    query.push(" order by total_price ");
+    query = query.join("");
+
+
+    var mySqlQuery = connection.query(query,[tests,count], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("lab list for test query = " + mySqlQuery.sql);
+}
+
 module.exports = LabDao;
