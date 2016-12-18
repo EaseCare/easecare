@@ -27,6 +27,13 @@ app.post('/', function (req, res) {
     });
 });
 
+app.put('/',function (req, res){
+    logger.info("Update ShoppingCart list request received");
+    var data = req.data;
+    shoppingCartService.updateCartTestLabs(data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+})
 app.delete('/', function(req, res) {
     logger.info("Delete ShoppingCart Item request received");
     shoppingCartService.removeUserCartItem(req.data, function (err, status, data) {

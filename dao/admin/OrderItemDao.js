@@ -104,4 +104,28 @@ OrderItemDao.prototype.getOrderItemStatus = function(data, cb){
     });
     logger.debug("Get order item status query = " + mySqlQuery.sql);
 }
+
+OrderItemDao.prototype.updateLab = function(data, cb){
+    logger.debug("Update order item dao call start (updateLab())"+JSON.stringify(data));
+    var date = utilDao.getMySqlFormatDateTime(null);
+    var queryData = {
+        lab_id: data.lab_id,
+        price: data.price,
+        edited_date: date,
+        edited_by: data.logged_in_user.user_id
+    };
+    var query = [];
+    query.push(" UPDATE `order_item` SET ? where id = ?");
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query, [queryData,data.id], function (err, resultSet) {
+        if (err) {
+            logger.error("Error in adding item to cart "+err);
+            return cb(err);
+        }
+        logger.debug("Result update lab "+JSON.stringify(queryData)+data.id);
+        return cb(null, resultSet);
+    });
+    logger.debug("create order item query = " + mySqlQuery.sql);
+}
 module.exports = OrderItemDao;

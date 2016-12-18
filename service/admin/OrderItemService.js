@@ -39,6 +39,24 @@ OrderItemService.prototype.add = function (modal, cb) {
         });
     });
 };
+OrderItemService.prototype.updateLab = function(modal, cb){
+    logger.info("add order item service called (add())"+JSON.stringify(modal));
+    var self = this;
+    priceService.getTestPrice(modal,function(err,status,price){
+        if(err){
+            logger.error("Error in get test price (add())"+err);
+            return cb(err, status);
+        }
+        modal.price = price;
+        orderItemDao.updateLab(modal, function (err, result) {
+            if (err) {
+                logger.error("Error in add order item (add()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+            }
+            return cb(null, responseCodes.SUCCESS, result); 
+        });
+    });
+};
 /*********************************Get List End************************************************/
 OrderItemService.prototype.addOrderItemStatus = function (modal, cb) {
     logger.info("add order item status service called (addOrderItemStatus())");

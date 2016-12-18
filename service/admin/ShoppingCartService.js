@@ -74,6 +74,42 @@ ShoppingCartService.prototype.add = function (modal, cb) {
         }
     });
 };
+ShoppingCartService.prototype.updateCartTestLabs = function(data, cb){
+    logger.info("Shopping Cart update Cart Test labs service called (updateCartTestLabs())");
+    var self = this;
+    self.getList(data, function(err, status, result){
+        if(err){
+            return cb(err, status);
+        }
+        if(result && result.order_items.length>0){
+            var counter = 0;
+            (result.order_items).forEach(function(order_item){
+                var inputData = {};
+                inputData.id = order_item.order_item_id;
+                inputData.test_id = order_item.testData.id;
+                inputData.lab_id = data.lab_id;
+                inputData.logged_in_user = data.logged_in_user;
+               orderItemService.updateLab(inputData, function(err, status, out){
+                   counter++;
+                   if(err){
+                       logger.error("Error during update order item"+err);
+                       return cb(err, status);
+                   }
+                   if((result.order_items).length === counter){
+                       self.getList(data, function(err, status, result){
+                            if(err){
+                                return cb(err, status);
+                            }
+                            return cb(null, status, result);     
+                       });
+                   }
+               });
+            })
+        }else{
+            return cb(messages.emptyCart, responseCodes.UNPROCESSABLE);
+        }
+    })
+}
 ShoppingCartService.prototype.addOrderItem = function(data,cb){
      logger.info("ShoppingCart add order_item to cart service called (addOrderItem())");
     shoppingCartDao.addOrderItem(data,function(err,result){
