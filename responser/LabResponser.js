@@ -39,7 +39,6 @@ LabResponser.prototype.MapObjects = function(array1, array2, array3, out_map, cb
     var length = 0;
     var tests = [];
     var total_price = 0;
-    console.log("The out map i have is"+JSON.stringify(out_map));
     if(array1.length < array2.length){
         if(array1.length <array3.length){
             length = array1.length;

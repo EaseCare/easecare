@@ -1,7 +1,7 @@
 "use strict";
 
 var utilDao = require('dao/util/UtilDao.js');
-
+var lodash = require("lodash");
 var UtilService = function() {};
 
 
@@ -88,6 +88,11 @@ UtilService.prototype.getDuplicate = function(inputArray, cb){
     });
     var keys = Object.keys(out_map);
     return cb(keys, out_map);
+}
+UtilService.prototype.sortArrayOnValue = function(inputArray, key){
+    return lodash.sortBy(inputArray, [function(value) {
+        return value[key] ;
+    }]);
 }
 module.exports = UtilService;
     

@@ -3,7 +3,8 @@
 var moduleName = __filename;
 var cache = require('service/cache').local;
 var logger = require('helper/Logger.js')(moduleName);
-
+var config = require('config');
+var constants = config.constants;
 var connection = require('service/mysql/Pool.js');
 
 var TestDao = function () { }
@@ -162,7 +163,7 @@ TestDao.prototype.getTestLabs = function(data, cb){
     query.push(" GROUP BY l.id ");
     var conditionArray = [];
     if(data.latitude && data.longitude && data.latitude !== "0.0" && data.logitude !== "0.0"){
-        query.push(" HAVING distance <= 5 ");
+        query.push(" HAVING distance <="+constants.LAB.RANGE_IN_KM +" ");
         conditionArray.push(data.latitude);
         conditionArray.push(data.longitude);
         conditionArray.push(data.latitude);

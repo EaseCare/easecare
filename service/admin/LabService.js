@@ -43,7 +43,8 @@ LabService.prototype.getListForTest = function (modal, cb) {
             }
             if(entities && entities.length>0){
                 var listForTestResponse = labResponser.getListForTestResponse(entities, out_map);
-                return cb(null, responseCodes.SUCCESS, listForTestResponse);
+                var sortedResponse = utilService.sortArrayOnValue(listForTestResponse, "total_price");
+                return cb(null, responseCodes.SUCCESS, sortedResponse);
             }else{
                 return cb(null, responseCodes.SUCCESS, []);
             }

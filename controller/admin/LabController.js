@@ -26,6 +26,8 @@ app.get('/tests', function(req, res){
     logger.info("Get Lab detail request received");
     var data = req.data;
     data.test_ids = req.query.ids;
+    data.latitude = req.query.latitude;
+    data.longitude = req.query.longitude;
     labService.getListForTest(data, function (err, status, data) {
         return response(err, status, data, res);
     });

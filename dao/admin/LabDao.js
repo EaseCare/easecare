@@ -3,7 +3,8 @@
 var moduleName = __filename;
 var cache = require('service/cache').local;
 var logger = require('helper/Logger.js')(moduleName);
-
+var config = require('config');
+var constants = config.constants;
 var connection = require('service/mysql/Pool.js');
 
 var LabDao = function () { }
@@ -30,7 +31,7 @@ LabDao.prototype.getList = function (data, cb) {
 }
 
 LabDao.prototype.getListForTest = function(data, cb){
-    logger.debug("Lab get list for test method call start (getListForTest())"+data.tests);
+    logger.debug("Lab get list for test method call start (getListForTest())"+JSON.stringify(data));
     var count = 0;
     var tests = []
     if(data.tests){
@@ -45,6 +46,12 @@ LabDao.prototype.getListForTest = function(data, cb){
     query.push(" ,GROUP_CONCAT(t.id,'') as test_ids ");
     query.push(" ,GROUP_CONCAT(t.name,'') as test_name ");
     query.push(" ,GROUP_CONCAT(lt.price,'') as test_price ");
+    if(data.latitude && data.longitude && data.latitude !== "0.0" && data.logitude !== "0.0"){
+        query.push(" ,( 6371 * acos( cos( radians(?) ) "); 
+        query.push(" * cos( radians( a.`latitude` ) ) "); 
+        query.push(" * cos( radians( a.`longitude` ) - radians(?) ) "); 
+        query.push(" + sin( radians(?) ) * sin( radians( a.`latitude` ) ) ) ) AS distance ");
+    }
     query.push(" FROM easecare.lab_test as lt ");
     query.push(" inner join lab as l on l.id = lt.lab_id ");
     query.push(" inner join test AS t on t.id = lt.test_id ");
@@ -53,11 +60,20 @@ LabDao.prototype.getListForTest = function(data, cb){
     query.push(" where lt.test_id in(?) ");
     query.push(" group by lt.lab_id ");
     query.push(" having count(*) = ? ");
+     var conditionArray = [];
+    if(data.latitude && data.longitude && data.latitude !== "0.0" && data.logitude !== "0.0"){
+        query.push(" and distance <="+constants.LAB.RANGE_IN_KM +" ");
+        conditionArray.push(data.latitude);
+        conditionArray.push(data.longitude);
+        conditionArray.push(data.latitude);
+    }
+    conditionArray.push(tests);
+    conditionArray.push(count);
     query.push(" order by total_price ");
     query = query.join("");
 
 
-    var mySqlQuery = connection.query(query,[tests,count], function (err, resultSet) {
+    var mySqlQuery = connection.query(query, conditionArray, function (err, resultSet) {
         if (err) {
             return cb(err);
         }
