@@ -57,5 +57,21 @@ OrderService.prototype.addUpdateOrderPrice = function(modal, cb){
     })
 }
 
+OrderService.prototype.getOrderPrice = function(modal, cb){
+    logger.info("Get order price service called (getOrderPrice())");
+    orderDao.getOrderPrice(modal,function(err, result){
+        if(err){
+            logger.debug("Error getting order price (getOrderPrice())"+err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(result && result.length>0){
+            return cb(null, responseCodes.SUCCESS, result[0]);
+        }else{
+            return cb(messages.orderPriceNotFound, responseCodes.NOT_FOUND);
+        }
+    });
+}
+
+
 
 module.exports = OrderService;

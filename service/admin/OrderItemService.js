@@ -6,6 +6,7 @@ var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var orderItemDao = new (require('dao/admin/OrderItemDao.js'))();
+var orderDao = new (require('dao/admin/OrderDao.js'))();
 var utilService = new (require('service/util/UtilService.js'))();
 var priceService = new (require('service/admin/PriceService.js'))();
 var OrderItemService = function () { };
@@ -78,6 +79,29 @@ OrderItemService.prototype.getOrderItemStatus = function (modal, cb) {
         return cb(null, responseCodes.SUCCESS, result); 
     });
 }
+OrderItemService.prototype.getOrderPriceFromOrderItem = function(modal, cb){
+    logger.info("Get order price from order Item (getOrderPriceFromOrderItem())");
+    orderItemDao.getOrderPriceFromOrderItem(modal, function(err, result){
+        if(err){
+            logger.debug("Error getting order price (getOrderPriceFromOrderItem())"+err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(result && result.length>0){
+            return cb(null, responseCodes.SUCCESS, result[0].total_price);
+        }else{
+            return cb(messages.orderPriceNotFound, responseCodes.NOT_FOUND);
+        }
+    });
+}
 
-
+OrderItemService.prototype.addUpdateOrderPrice = function(modal, cb){
+    logger.info("Add update order price service called (addUpdateOrderPrice())");
+    orderDao.addUpdateOrderPrice(modal,function(err, result){
+        if(err){
+            logger.debug("Error adding order price (addUpdateOrderPrice())"+err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null, responseCodes.SUCCESS, result);
+    })
+}
 module.exports = OrderItemService;

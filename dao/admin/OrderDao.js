@@ -46,11 +46,29 @@ OrderDao.prototype.addUpdateOrderPrice = function(data, cb){
         created_by: data.logged_in_user.user_id,
         edited_by: data.logged_in_user.user_id
     };
+    var updateData = {};
+    if(data.amount||data.price){
+        updateData.total = data.amount||data.price;
+    }
+    if(data.order_id){
+        updateData.order_id = data.order_id;
+    }
+    if(data.discount_amount){
+        updateData.discount_amount = data.discount_amount;
+    }
+    if(data.offer_id){
+        updateData.offer_id = data.offer_id;
+    }
+    if(data.payable_amount){
+        updateData.payable_amount = data.payable_amount;
+    }
+    updateData.edited_date = date;
+    updateData.edited_by = data.logged_in_user.user_id
     var query = [];
     query.push(" INSERT INTO `order_price` SET ? ON DUPLICATE KEY UPDATE ?");
     query = query.join(" ");
     
-    var mySqlQuery = connection.query(query, [queryData,queryData], function (err, resultSet) {
+    var mySqlQuery = connection.query(query, [queryData,updateData], function (err, resultSet) {
         if (err) {
             return cb(err);
         }
@@ -59,19 +77,20 @@ OrderDao.prototype.addUpdateOrderPrice = function(data, cb){
     logger.debug("add update order price query = " + mySqlQuery.sql);
 }
 
-OrderDao.prototype.getDetail = function(data, cb){
-    logger.debug("Get order detail screen dao call start (getDetail())");
+OrderDao.prototype.getOrderPrice = function(data, cb){
+    logger.debug("Get order price dao call start (getDetail())");
     
     var query = [];
-    query.push(" ");
+    query.push(" select * from order_price where order_id = ? ");
     query = query.join(" ");
     
-    var mySqlQuery = connection.query(query, [queryData,queryData], function (err, resultSet) {
+    var mySqlQuery = connection.query(query, [data.order_id], function (err, resultSet) {
         if (err) {
             return cb(err);
         }
         return cb(null, resultSet);
     });
-    logger.debug("get order detail query = " + mySqlQuery.sql);
+    logger.debug("get order price query = " + mySqlQuery.sql);
 }
+
 module.exports = OrderDao;

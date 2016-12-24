@@ -128,4 +128,20 @@ OrderItemDao.prototype.updateLab = function(data, cb){
     });
     logger.debug("create order item query = " + mySqlQuery.sql);
 }
+
+OrderItemDao.prototype.getOrderPriceFromOrderItem = function(data, cb){
+    logger.debug("Get order price from order item dao call start (getOrderPriceFromOrderItem())");
+    
+    var query = [];
+    query.push(" select sum(price) as total_price from order_item where order_id = ? ");
+    query = query.join(" ");
+    
+    var mySqlQuery = connection.query(query, [data.order_id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("get order price query = " + mySqlQuery.sql);
+}
 module.exports = OrderItemDao;

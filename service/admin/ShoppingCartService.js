@@ -8,6 +8,7 @@ var messages = config.messages;
 var shoppingCartDao = new (require('dao/admin/ShoppingCartDao.js'))();
 var utilService = new (require('service/util/UtilService.js'))();
 var orderItemService = new (require('service/admin/OrderItemService.js'))();
+//var orderService = new (require('service/admin/OrderService.js'))();
 var ShoppingCartService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -48,10 +49,23 @@ ShoppingCartService.prototype.add = function (modal, cb) {
                 if(err){
                     logger.error("Error in add order item to cart(add()) " + err);
                     return cb(err, code);
-                }   
-                self.getList(modal, function (err, code, output) {
-                    return cb(err, code, output);
-                }); 
+                }  
+                orderItemService.getOrderPriceFromOrderItem(modal, function(err, code, price){
+                    if(err){
+                        logger.error("Error in get order price"+err);
+                        return cb(messages.orderPriceNotFound, responseCodes.INTERNAL_SERVER_ERROR);
+                    }
+                    modal.amount = price;
+                    orderItemService.addUpdateOrderPrice(modal, function(err, status, code){
+                        if(err){
+                            logger.error("Error add or update price"+err);
+                            return cb(err, status);
+                        }
+                        self.getList(modal, function (err, code, output) {
+                            return cb(err, code, output);
+                        });
+                    });
+                }) ; 
             });
         } else {
             shoppingCartDao.createCartOrder(modal, function (err, result) {
@@ -66,9 +80,22 @@ ShoppingCartService.prototype.add = function (modal, cb) {
                         logger.error("Error in add order item to cart(add()) " + err);
                         return cb(err, code);
                     }   
-                    self.getList(modal, function (err, code, output) {
-                        return cb(err, code, output);
-                    }); 
+                    orderItemService.getOrderPriceFromOrderItem(modal, function(err, code, price){
+                        if(err){
+                            logger.error("Error in get order price"+err);
+                            return cb(messages.orderPriceNotFound, responseCodes.INTERNAL_SERVER_ERROR);
+                        }
+                        modal.amount = total_price;
+                        orderItemService.addUpdateOrderPrice(modal, function(err, status, code){
+                            if(err){
+                                logger.error("Error add or update price"+err);
+                                return cb(err, status);
+                            }
+                            self.getList(modal, function (err, code, output) {
+                                return cb(err, code, output);
+                            });
+                        });
+                    }) ;  
                 });
             });
         }
