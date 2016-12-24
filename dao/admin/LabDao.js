@@ -30,11 +30,11 @@ LabDao.prototype.getList = function (data, cb) {
 }
 
 LabDao.prototype.getListForTest = function(data, cb){
-    logger.debug("Lab get list for test method call start (getListForTest())"+data.test_ids);
+    logger.debug("Lab get list for test method call start (getListForTest())"+data.tests);
     var count = 0;
     var tests = []
-    if(data.test_ids){
-        tests = data.test_ids.split(",");
+    if(data.tests){
+        tests = data.tests;
         count = tests.length;
     }
     var query = [];

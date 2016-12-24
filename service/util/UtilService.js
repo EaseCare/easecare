@@ -76,7 +76,19 @@ UtilService.prototype.formatDateTime = function (str) {
         return null;
     }
 };
-
+UtilService.prototype.getDuplicate = function(inputArray, cb){
+    var out_map = {};
+    inputArray.forEach(function(value){
+        if(value in out_map){
+            var temp = out_map[value];
+            out_map[value] = temp + 1;
+        }else{
+            out_map[value] = 1;
+        }
+    });
+    var keys = Object.keys(out_map);
+    return cb(keys, out_map);
+}
 module.exports = UtilService;
     
   

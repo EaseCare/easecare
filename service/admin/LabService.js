@@ -7,6 +7,7 @@ var responseCodes = config.responseCode;
 var messages = config.messages;
 var labDao = new (require('dao/admin/LabDao.js'))();
 var labResponser = new (require('responser/LabResponser.js'))();
+var utilService = new (require('service/util/UtilService.js'))();
 var LabService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -29,19 +30,25 @@ LabService.prototype.getList = function (modal, cb) {
 LabService.prototype.getListForTest = function (modal, cb) {
     logger.info("Lab get list for test service called (getListForTest())");
     var self = this;
-
-    labDao.getListForTest(modal, function (err, entities) {
-        if (err) {
-            logger.error("Error in get lab list for test (getListForTest()) " + err);
-            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-        }
-        if(entities && entities.length>0){
-            var listForTestResponse = labResponser.getListForTestResponse(entities);
-            return cb(null, responseCodes.SUCCESS, listForTestResponse);
-        }else{
-            return cb(null, responseCodes.SUCCESS, []);
-        }
-    });
+    var tests = [];
+    if(modal.test_ids){
+        tests = modal.test_ids.split(",");
+    }
+    utilService.getDuplicate(tests, function(keys, out_map){
+        modal.tests = keys;
+        labDao.getListForTest(modal, function (err, entities) {
+            if (err) {
+                logger.error("Error in get lab list for test (getListForTest()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+            }
+            if(entities && entities.length>0){
+                var listForTestResponse = labResponser.getListForTestResponse(entities, out_map);
+                return cb(null, responseCodes.SUCCESS, listForTestResponse);
+            }else{
+                return cb(null, responseCodes.SUCCESS, []);
+            }
+        });
+    })
 };
 /*********************************Get List For Test End************************************************/
 
