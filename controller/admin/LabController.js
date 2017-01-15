@@ -16,7 +16,8 @@ var labService = new LabService();
 app.get('/', function (req, res) {
     logger.info("Get Lab list request received");
     var data = req.data;
-    data.test_id = req.query.test_id;
+    //data.test_id = req.query.test_id;
+    data.isEmpanelled = req.query.is_empanelled;
     labService.getList(data, function (err, status, data) {
         return response(err, status, data, res);
     });
