@@ -60,13 +60,13 @@ app.put('/:id', function (req, res) {
         var logged_in_user = data.logged_in_user;
         data = req.body;
         data.logged_in_user = logged_in_user;
-
         var baseDir = envProp.reports.baseDir;
         if(req.fileName){
             data.relative_path = baseDir+req.data.logged_in_user.user_id+"/"+req.fileName;
         }
         data.id = req.params.id;
         userService.update(data, function (err, status, data) {
+            data.image_path = req.headers.host + data.image_path;
             return response(err, status, data, res);
         });
     });
