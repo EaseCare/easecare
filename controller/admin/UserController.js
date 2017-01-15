@@ -5,6 +5,8 @@ var util = require('util');
 var config = require('config');
 var sharedCache = require('service/cache').shared;
 var middlewareLogin = require('middleware/LoginMiddleware.js');
+var fileStorage = require("helper/FileUploader.js");
+var envProp = config.env.prop;
 var response = require('controller/ResponseController.js');
 var moduleName = __filename;
 var logger = require("helper/Logger.js")(moduleName);
@@ -49,9 +51,24 @@ app.get('/:id', function (req, res) {
 app.put('/:id', function (req, res) {
     logger.info("Update User detail request received");
     var data = req.data;
-    data.id = req.params.id;
-    userService.update(data, function (err, status, data) {
-        return response(err, status, data, res);
+    data = req.body;
+    var fileUpload = fileStorage.single('profile');
+    fileUpload(req, res, function (err) {
+        if (err) {
+            return cb(err,responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        var logged_in_user = data.logged_in_user;
+        data = req.body;
+        data.logged_in_user = logged_in_user;
+
+        var baseDir = envProp.reports.baseDir;
+        if(req.fileName){
+            data.relative_path = baseDir+req.data.logged_in_user.user_id+"/"+req.fileName;
+        }
+        data.id = req.params.id;
+        userService.update(data, function (err, status, data) {
+            return response(err, status, data, res);
+        });
     });
 });
 

@@ -45,9 +45,11 @@ UserDao.prototype.getDetail = function (data, cb) {
     query.push(" SELECT u.id,u.first_name,u.last_name,u.date_of_birth,u.gender ");
     query.push(" ,ul.email,ul.mobile_number ");
     query.push(" ,a.address_line_1,a.address_line_2,a.landmark,a.city,a.state ");
+    query.push(" ,i.path as image_path ")
     query.push(" FROM user as u ");
     query.push(" left outer join user_login as ul on ul.user_id = u.id ");
     query.push(" left outer join address as a on a.id = u.address_id ");
+    query.push(" left outer join image as i on i.id = u.image_id ");
     query.push(" where u.id = ? ");
     query = query.join("");
 
@@ -101,6 +103,9 @@ UserDao.prototype.update = function (data, cb) {
     if (data.gender) {
         queryData.gender = data.gender;
     }
+    if(data.image_id){
+        queryData.image_id = data.image_id;
+    }
     queryData.edited_date = date;
     queryData.edited_by = data.logged_in_user.user_id;
 
@@ -121,15 +126,15 @@ UserDao.prototype.addUserLogin = function (data, cb) {
     logger.debug("user add logIn call start" + JSON.stringify(data));
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
-        user_id: data.user_id,
+        user_id: data.id,
         email: data.email,
         mobile_number: data.mobile_number,
         password: data.password,
         is_facebook:data.is_facebook || 0,
         created_date: date,
         edited_date: date,
-        created_by: data.user_id,
-        edited_by: data.user_id
+        created_by: data.logged_in_user.user_id,
+        edited_by: data.logged_in_user.user_id
     }
     var query = [];
     query.push(" insert into user_login set ? ");
@@ -166,7 +171,7 @@ UserDao.prototype.updateUserLogin = function (data, cb) {
         }
         return cb(null, resultSet);
     });
-    logger.debug("query = " + JSON.stringify(mySqlQuery));
+    logger.debug("query = " + mySqlQuery.sql);
 }
 UserDao.prototype.addUserAddress = function (data, cb) {
     logger.debug("user add addres call start" + JSON.stringify(data));

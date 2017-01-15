@@ -5,7 +5,10 @@ var logger = require('helper/Logger.js')(moduleName);
 var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
+var fileStorage = require("helper/FileUploader.js");
+var fileUtil = require("helper/FileUtil.js");
 var userDao = new (require('dao/admin/UserDao.js'))();
+var imageDao = new (require('dao/admin/ImageDao.js'))();
 var utilService = new (require('service/util/UtilService.js'))();
 var UserService = function () { };
 
@@ -60,7 +63,7 @@ UserService.prototype.add = function (data, cb) {
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
 
-        data.user_id =  addUserresult.insertId;
+        data.id =  addUserresult.insertId;
         userDao.addUserLogin(data, function (err, addUserLoginResult) {
             if (err) {
                 logger.error("Error in add user login (add()) " + err);
@@ -90,62 +93,115 @@ UserService.prototype.update = function (data, cb) {
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
         if(user && user.length>0){
-            if(user[0].address_id){
-                var userId = data.id;
-                data.id = user[0].address_id; 
-                userDao.updateUserAddress(data,function(err, address_result){
+            var userId = data.id;
+            self.createOrUpdateUserAddress(data, user[0], function(err, status, address_result_id){
+                if(err){
+                    logger.error("Error add or update user address (update())"+err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                self.createOrUpdateUserImage(data, user[0], function(err, status, image_result_id){
                     if(err){
-                        logger.error("Error in update user address (update()) " + err);
+                        logger.error("Error add or update user image (update())"+err);
                         return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
                     }
                     data.id = userId;
-                    userDao.updateUserLogin(data,function(err, user_login_result){
+                    data.address_id = address_result_id;
+                    data.image_id = image_result_id;
+                    self.createOrUpdateUserLogin(data,function(err, status, user_login_result){
                        if(err){
                             logger.error("Error in update user login (update()) " + err);
-                            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                            return cb(err, status);
                         } 
                         userDao.update(data, function(err, user_result){
                             if(err){
                                 logger.error("Error in update user (update()) " + err);
                                 return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
                             } 
-                           logger.debug(" user detail get in  (update())");
+                            logger.debug(" user detail get in  (update())");
                             self.getDetail(data, function (err, code, getUserDetailResult) {
                                 return cb(err, code, getUserDetailResult);
                             }); 
-                        })
+                        });
                     });
                 });
-            }else{
-                userDao.addUserAddress(data,function(err, address_result){
-                    if(err){
-                        logger.error("Error in add user address (update()) " + err);
-                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-                    }
-                    data.address_id = address_result.insertId;
-                    userDao.updateUserLogin(data,function(err, user_login_result){
-                       if(err){
-                            logger.error("Error in update user login (update()) " + err);
-                            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-                        } 
-                        userDao.update(data, function(err, user_result){
-                            if(err){
-                                logger.error("Error in update user (update()) " + err);
-                                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-                            } 
-                           logger.debug(" user detail get in  (update())");
-                            self.getDetail(userDetailData, function (err, code, getUserDetailResult) {
-                                return cb(err, code, getUserDetailResult);
-                            }); 
-                        })
-                    });
-                });
-            }
+            });
         }else{
             return cb(messages.userNotFound,responseCodes.NOT_FOUND)
         }
     });
 };
+UserService.prototype.createOrUpdateUserAddress = function(data,user, cb){
+    logger.info("Create Or Update user Address service called (createOrUpdateUserAddress())");
+    var self = this;
+    if(user.address_id){
+        data.id = user.address_id; 
+        userDao.updateUserAddress(data,function(err, address_result){
+            if(err){
+                logger.error("Error in update user address (createOrUpdateUserAddress()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+            }
+            return cb(null, responseCodes.SUCCESS, user.address_id);
+        });
+    }else{
+        userDao.addUserAddress(data,function(err, address_result){
+            if(err){
+                logger.error("Error in add user address (createOrUpdateUserAddress()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+            }
+            return cb(null, responseCodes.SUCCESS, address_result.insertId);
+        });
+    }
+}
+UserService.prototype.createOrUpdateUserImage = function(data,user, cb){
+    logger.info("Create Or Update user Image service called (createOrUpdateUserImage())");
+    var self = this;
+    if(data.relative_path){
+        if(user.image_id){
+            data.id = user.image_id; 
+            imageDao.updateImage(data,function(err, image_result){
+                if(err){
+                    logger.error("Error in update user image (createOrUpdateUserImage()) " + err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                return cb(null, responseCodes.SUCCESS, user.image_id);
+            });
+        }else{
+            imageDao.addImage(data,function(err, image_result){
+                if(err){
+                    logger.error("Error in add user image (createOrUpdateUserImage()) " + err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                console.log(image_result);
+                return cb(null, responseCodes.SUCCESS, image_result.insertId);
+            });
+        }
+    }else{
+        return cb(null, responseCodes.SUCCESS, null);
+    }
+}
+UserService.prototype.createOrUpdateUserLogin = function(data, cb){
+    logger.info("Create Or Update user Image service called (createOrUpdateUserLogin())");
+    userDao.updateUserLogin(data,function(err, login_result){
+        if(err){
+            logger.error("Error in update user image (createOrUpdateUserLogin()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        console.log(login_result);
+        if(login_result.affectedRows > 0){
+            return cb(null, responseCodes.SUCCESS, data.id);
+        }else{
+            userDao.addUserLogin(data,function(err, login_result){
+                if(err){
+                    logger.error("Error in add user image (createOrUpdateUserLogin()) " + err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                }
+                console.log("2");
+                console.log(login_result);
+                return cb(null, responseCodes.SUCCESS, login_result.insertId);
+            });
+        }
+    });
+}
 UserService.prototype.isUserExist = function(data, cb){
     logger.info("User service called (isUserExist())");
     var self = this;

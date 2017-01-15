@@ -18,10 +18,13 @@ LabDao.prototype.getList = function (data, cb) {
     query.push(" FROM lab as l ");
     query.push(" LEFT OUTER JOIN address as a on a.id = l.address_id ");
     query.push(" LEFT OUTER JOIN image as i on i.id = l.image_id ");
+    if(data.isEmpanelled){
+        query.push("WHERE l.isEmpanelled = ? ");
+    }
     query = query.join("");
 
 
-    var mySqlQuery = connection.query(query, function (err, resultSet) {
+    var mySqlQuery = connection.query(query,[data.isEmpanelled], function (err, resultSet) {
         if (err) {
             return cb(err);
         }
