@@ -38,7 +38,7 @@ PrescriptionDao.prototype.getList = function (data, cb) {
     logger.debug("Add prescription method call start (addPriscription())");
     
     var query = [];
-    query.push(" SELECT id,title,relative_path,feed_back,created_date from user_prescription WHERE user_id = ? ");
+    query.push(" SELECT id,title,relative_path,created_date from user_prescription WHERE user_id = ? ");
     if(data.id){
         query.push(" AND id = ? ");
     }
@@ -52,6 +52,22 @@ PrescriptionDao.prototype.getList = function (data, cb) {
         return cb(null, resultSet);
     });
     logger.debug("login query = " + mySqlQuery.sql);
+}
+PrescriptionDao.prototype.getDetail = function (data, cb) {
+    logger.debug("Get prescription detail method call start (addPriscription())");
+    
+    var query = [];
+    query.push(" SELECT id,title,relative_path,feed_back,created_date from user_prescription WHERE id = ? ");
+    query = query.join("");
+
+
+    var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("Get detail query = " + mySqlQuery.sql);
 }
 
 PrescriptionDao.prototype.deletePrescription = function(data, cb){

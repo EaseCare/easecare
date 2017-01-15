@@ -30,6 +30,29 @@ PrescriptionService.prototype.getList = function (modal, cb) {
 };
 /*********************************Get List End************************************************/
 
+/*********************************Get Detail Start************************************************/
+PrescriptionService.prototype.getDetail = function (modal, cb) {
+    logger.info("Category get list service called (getList())");
+    prescriptionDao.getDetail(modal, function(err, result){
+        if(err){
+            logger.error("Error in get prescription list (getList())");
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(result && result.length>0){
+            var finalResult = [];
+            result.forEach(function(prescription){
+                prescription.relative_path = modal.host + prescription.relative_path;
+                finalResult.push(prescription);
+            })
+            return cb(null, responseCodes.SUCCESS, finalResult[0]);
+        }else{
+            return cb(messages.prescriptionNotFound, responseCodes.NOT_FOUND);
+        }
+    })
+    
+};
+/*********************************Get Detail End************************************************/
+
 PrescriptionService.prototype.deletePrescription = function(modal, cb){
     logger.info("Delete prescription service called (deletePrescription())");
     prescriptionDao.deletePrescription(modal, function(err, result){
@@ -48,15 +71,16 @@ PrescriptionService.prototype.deletePrescription = function(modal, cb){
 PrescriptionService.prototype.addPrescription = function (req, res, cb) {
     logger.info("Add prescription service called (addPrescription())");
     var self = this;
-    console.log("the detail is"+JSON.stringify(req.headers));
+    var data = req.data;
+    data = req.body;
     var fileUpload = fileStorage.single('file');
     fileUpload(req, res, function (err) {
         if (err) {
             return cb(err,responseCodes.INTERNAL_SERVER_ERROR);
         }
-        console.log("in file upload and req.filename is"+req.fileName);
-        var data = req.data;
-        data.title = req.body.title;
+        var logged_in_user = data.logged_in_user;
+        data = req.body;
+        data.logged_in_user = logged_in_user;
         var baseDir = envProp.reports.baseDir;
         if(req.fileName){
             fileUtil.makeDirIfNotExist(baseDir+req.data.logged_in_user.user_id,function(err,result){

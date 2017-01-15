@@ -21,6 +21,15 @@ app.get('/', function (req, res) {
         return response(err, status, data, res);
     });
 });
+app.get('/:id', function (req, res) {
+    logger.info("Get Prescription detail request received");
+    var data = req.data;
+    data.id = req.params.id;
+    data.host = req.headers.host;
+    prescriptionService.getDetail(data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
 
 app.post('/', function(req,res){
     logger.info("Add Prescription request received");
