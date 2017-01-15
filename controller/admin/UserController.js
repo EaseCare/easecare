@@ -44,6 +44,7 @@ app.get('/:id', function (req, res) {
     var data = req.data;
     data.id = req.params.id;
     userService.getDetail(data, function (err, status, data) {
+        data.image_path = req.headers.host + data.image_path;
         return response(err, status, data, res);
     });
 });
