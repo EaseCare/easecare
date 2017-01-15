@@ -16,6 +16,7 @@ var PORT = config.env.prop.port;
 
 
 //app.use('/doc', express.static(path.join(__dirname, 'doc')));
+//console.log("path is"+express.static(path.join(__dirname, 'reports')));
 app.use('/reports', express.static(path.join(__dirname, 'reports')));
 
 require('middleware')(app);
