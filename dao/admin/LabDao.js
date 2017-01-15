@@ -13,7 +13,8 @@ LabDao.prototype.getList = function (data, cb) {
     logger.debug("lab get list method call start (getList())");
     var query = [];
     query.push(" SELECT l.id,l.name ");
-    query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
+    query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state ");
+    query.push(" ,a.latitude,a.longitude,a.mobile_number ");
     query.push(" ,i.path ");
     query.push(" FROM lab as l ");
     query.push(" LEFT OUTER JOIN address as a on a.id = l.address_id ");
