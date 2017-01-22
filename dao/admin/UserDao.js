@@ -140,7 +140,7 @@ UserDao.prototype.addUserLogin = function (data, cb) {
         created_date: date,
         edited_date: date,
         created_by: createdId,
-        edited_by: deditedId
+        edited_by: editedId
     }
     var query = [];
     query.push(" insert into user_login set ? ");
