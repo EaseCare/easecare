@@ -133,8 +133,8 @@ UserDao.prototype.addUserLogin = function (data, cb) {
         is_facebook:data.is_facebook || 0,
         created_date: date,
         edited_date: date,
-        created_by: data.logged_in_user.user_id,
-        edited_by: data.logged_in_user.user_id
+        created_by: data.logged_in_user.user_id||1,
+        edited_by: data.logged_in_user.user_id||1
     }
     var query = [];
     query.push(" insert into user_login set ? ");
