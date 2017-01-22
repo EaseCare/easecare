@@ -124,6 +124,12 @@ UserDao.prototype.update = function (data, cb) {
 
 UserDao.prototype.addUserLogin = function (data, cb) {
     logger.debug("user add logIn call start" + JSON.stringify(data));
+    var createdId = data.id;
+    var editedId = data.id;
+    if(data.logged_in_user){
+        createdId = data.logged_in_user.user_id;
+        editedId = data.logged_in_user.user_id;
+    }
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
         user_id: data.id,
@@ -133,8 +139,8 @@ UserDao.prototype.addUserLogin = function (data, cb) {
         is_facebook:data.is_facebook || 0,
         created_date: date,
         edited_date: date,
-        created_by: data.logged_in_user.user_id||1,
-        edited_by: data.logged_in_user.user_id||1
+        created_by: createdId,
+        edited_by: deditedId
     }
     var query = [];
     query.push(" insert into user_login set ? ");
