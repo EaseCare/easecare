@@ -38,14 +38,23 @@ app.post('/', function (req, res) {
         return response(err, status, data, res);
     });
 });
-
+app.post('/lab',function(req, res){
+    logger.info("");
+    userService.addLabReview(req.data, function(err, status, data){
+        return response(err, status, data, res);
+    });
+});
 app.get('/:id', function (req, res) {
     logger.info("Get User detail request received");
     var data = req.data;
     data.id = req.params.id;
     userService.getDetail(data, function (err, status, data) {
-        data.image_path = req.headers.host + data.image_path;
-        return response(err, status, data, res);
+        if(err){
+            return response(err, status, data, res);
+        }else{
+            data.image_path = req.headers.host + data.image_path;
+            return response(err, status, data, res);
+        }
     });
 });
 
@@ -67,10 +76,13 @@ app.put('/:id', function (req, res) {
         }
         data.id = req.params.id;
         userService.update(data, function (err, status, data) {
-            data.image_path = req.headers.host + data.image_path;
+            if(data){
+                data.image_path = req.headers.host + data.image_path;
+            }
             return response(err, status, data, res);
         });
     });
 });
+
 
 module.exports = app;

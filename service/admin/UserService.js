@@ -220,4 +220,14 @@ UserService.prototype.isUserExist = function(data, cb){
         }
     });
 }
+UserService.prototype.addLabReview = function(data, cb){
+    logger.info("User add lab review service called (addLabReview())");
+    userDao.addLabReview(data, function (err, user) {
+        if (err) {
+            logger.error("Error in service add user lab review (addLabReview()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        return cb(null, responseCodes.SUCCESS, {"message":messages.labReviewAdded})
+    });
+}
 module.exports = UserService;

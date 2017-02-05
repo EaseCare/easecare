@@ -246,4 +246,40 @@ UserDao.prototype.updateUserAddress = function (data, cb) {
     });
     logger.debug("query = " + mySqlQuery);
 }
+UserDao.prototype.addLabReview = function (data, cb) {
+    logger.debug("user add lab review call start (addLabReview())"+JSON.stringify(data));
+    var date = utilDao.getMySqlFormatDateTime(null);
+    var queryData = {
+        user_id: data.logged_in_user.user_id,
+        lab_id: data.lab_id,
+        rating: data.rating,
+        review: data.review,
+        created_date: date,
+        edited_date: date,
+        edited_by: data.logged_in_user.user_id,
+        created_by: data.logged_in_user.user_id
+    }
+    var updateData = {
+        edited_date: date,
+        edited_by: data.logged_in_user.user_id,
+    }
+    if(data.rating){
+        updateData.rating = data.rating;
+    }
+    if(data.review){
+        updateData.review = data.review;
+    }
+    var query = [];
+    query.push(" insert into user_rating set ? on duplicate key update ? ");
+    query = query.join("");
+
+
+    var mySqlQuery = connection.query(query, [queryData, updateData], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("query = " + mySqlQuery.sql);
+}
 module.exports = UserDao;
