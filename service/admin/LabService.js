@@ -49,6 +49,7 @@ LabService.prototype.prepareReviewResponse = function(inputData){
         resultObject.name = data.name;
         resultObject.rating = data.rating;
         resultObject.review = data.review;
+        resultObject.created_date = data.created_date;
         var user = {};
         user.id = data.id;
         user.first_name = data.first_name;
