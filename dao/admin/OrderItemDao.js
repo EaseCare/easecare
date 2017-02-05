@@ -83,6 +83,7 @@ OrderItemDao.prototype.getOrderItemStatus = function(data, cb){
     query.push(" select "); 
     query.push(" oi.id as order_item_id "); 
     query.push(" ,t.name as test_name ");
+    query.push(" ,l.id as lab_id ");
     query.push(" ,l.name as lab_name ");
     query.push(" ,ois.name as test_state ");
     query.push(" ,oisc.created_date as test_state_created_date ");

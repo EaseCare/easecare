@@ -25,7 +25,39 @@ LabService.prototype.getList = function (modal, cb) {
     });
 };
 /*********************************Get List End************************************************/
+LabService.prototype.getLabReviews = function(modal, cb){
+    logger.info("Lab get reviews service called (getLabReviews())");
+    var self = this;
 
+    labDao.getLabReviews(modal, function (err, entities) {
+        if (err) {
+            logger.error("Error in get lab reviews list (getLabReviews()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(entities && entities.length>0){
+            var result = self.prepareReviewResponse(entities);
+            return cb(null, responseCodes.SUCCESS, result);
+        }else{
+            return cb(messages.labNotFound, responseCodes.NOT_FOUND);   
+        }
+    });
+}
+LabService.prototype.prepareReviewResponse = function(inputData){
+    var resultList = [];
+    inputData.forEach(function(data){
+        var resultObject = {};
+        resultObject.name = data.name;
+        resultObject.rating = data.rating;
+        resultObject.review = data.review;
+        var user = {};
+        user.id = data.id;
+        user.first_name = data.first_name;
+        user.last_name = data.last_name;
+        resultObject.user = user;
+        resultList.push(resultObject);
+    });
+    return resultList;
+}
 /*********************************Get List For Test Start************************************************/
 LabService.prototype.getListForTest = function (modal, cb) {
     logger.info("Lab get list for test service called (getListForTest())");

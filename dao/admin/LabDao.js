@@ -33,7 +33,28 @@ LabDao.prototype.getList = function (data, cb) {
     });
     logger.debug("lab list query = " + mySqlQuery.sql);
 }
+LabDao.prototype.getLabReviews = function(data, cb){
+    logger.debug("Get lab reviews list method call start (getLabReviews())"+JSON.stringify(data));
+    
+    var query = [];
+    query.push("SELECT l.name ");
+    query.push(" ,ur.rating, ur.review "); 
+    query.push(" ,u.id, u.first_name, u.last_name ")
+    query.push(" FROM user_rating as ur ");
+    query.push(" inner join user as u on u.id = ur.user_id ");
+    query.push(" inner join lab as l on l.id = ur.lab_id ");
+    query.push(" where l.id = ? ");
+    query = query.join("");
 
+
+    var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("lab list query = " + mySqlQuery.sql);
+}
 LabDao.prototype.getListForTest = function(data, cb){
     logger.debug("Lab get list for test method call start (getListForTest())"+JSON.stringify(data));
     var count = 0;

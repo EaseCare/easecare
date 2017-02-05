@@ -33,7 +33,14 @@ app.get('/tests', function(req, res){
         return response(err, status, data, res);
     });
 });
-
+app.get('/reviews/:id', function (req, res) {
+    logger.info("Get Lab reviews request received");
+    var data = req.data;
+    data.id = req.params.id;
+    labService.getLabReviews(data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
 app.get('/:id', function (req, res) {
     logger.info("Get Lab detail request received");
     var data = req.data;

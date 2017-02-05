@@ -9,6 +9,7 @@ module.exports = {
     emptyCart : 'User cart is already empty',
     testPriceNotAvailable: 'Test price for this lab not available in system',
     labReviewAdded: 'User lab review added successfully',
+    labNotFound: 'Lab not found in system',
     usedCoupon: 'Coupon Code is already used',
     invalidCoupon: 'Coupon Code is not valid',
     orderItemNotFound: 'Order Item not found in application',
