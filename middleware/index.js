@@ -30,6 +30,7 @@ module.exports = function(app){
 	app.use(bodyParser.urlencoded({extended:true}));
 	app.use(function(req,res,next){
 		req.data = req.body;
+		logger.debug("The request body i got is"+JSON.stringify(req.data));
 		next();
 	});
 	app.use(function(err, req, res, next){
@@ -59,6 +60,7 @@ module.exports = function(app){
 		new RegExp('\/v1\/security\/login', 'i'),
 		new RegExp('\/v1\/security\/signup', 'i'),
 		new RegExp('\/v1\/security\/fblogin', 'i'),
+		new RegExp('\/v1\/security\/forgotpassword', 'i'),
 		//new RegExp('\/reports', 'i')
 	];
 

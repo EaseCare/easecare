@@ -15,6 +15,8 @@ var UserService = require('service/admin/UserService.js');
 var authenticationService = new AuthenticationService();
 var userService = new UserService();
 
+
+
 /**
  * @api {get} /security/login Login API
  * @apiName Log In
@@ -70,7 +72,7 @@ app.post('/fblogin', function (req, res) {
 });
 
 app.post('/signup', function (req, res) {
-    logger.info("Add User login request received");
+    logger.info("Add User login request received"+JSON.stringify(req.data));
     userService.add(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
@@ -81,5 +83,11 @@ app.post('/changepassword', function (req, res) {
         return response(err, status, data, res);
     });
 });
+app.post('/forgotpassword',function(req,res){
+    logger.info("forgot password request received"+req.data);
+    authenticationService.forgotPassword(req.data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+})
 module.exports = app;
 

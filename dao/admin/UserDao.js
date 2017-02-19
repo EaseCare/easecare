@@ -42,7 +42,7 @@ UserDao.prototype.get = function (data, cb) {
 UserDao.prototype.getDetail = function (data, cb) {
     logger.debug("user get detail method call start (getDetail()) ");
     var query = [];
-    query.push(" SELECT u.id,u.first_name,u.last_name,u.date_of_birth,u.gender ");
+    query.push(" SELECT u.id,u.full_name,u.date_of_birth,u.gender ");
     query.push(" ,ul.email,ul.mobile_number ");
     query.push(" ,a.address_line_1,a.address_line_2,a.landmark,a.city,a.state ");
     query.push(" ,i.path as image_path ")
@@ -67,8 +67,7 @@ UserDao.prototype.add = function (data, cb) {
     logger.debug("user add call start (add())"+JSON.stringify(data));
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {
-        first_name: data.first_name,
-        last_name: data.last_name,
+        full_name: data.full_name,
         date_of_birth: data.date_of_birth,
         gender: data.gender,
         created_date: date,
@@ -91,11 +90,8 @@ UserDao.prototype.update = function (data, cb) {
     logger.debug("user add call start (add())");
     var date = utilDao.getMySqlFormatDateTime(null);
     var queryData = {};
-    if (data.first_name) {
-        queryData.first_name = data.first_name;
-    }
-    if (data.last_name) {
-        queryData.last_name = data.last_name;
+    if (data.full_name) {
+        queryData.full_name = data.full_name;
     }
     if (data.date_of_birth) {
         queryData.date_of_birth = data.date_of_birth;
@@ -105,6 +101,9 @@ UserDao.prototype.update = function (data, cb) {
     }
     if(data.image_id){
         queryData.image_id = data.image_id;
+    }
+    if(data.address_id){
+        queryData.address_id = data.address_id;
     }
     queryData.edited_date = date;
     queryData.edited_by = data.logged_in_user.user_id;

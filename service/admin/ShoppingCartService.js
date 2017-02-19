@@ -172,8 +172,7 @@ ShoppingCartService.prototype.getCartResponseObject = function (entities) {
         topReview.text = entity.review;
         topReview.created_date = entity.r_created_date;
         topReview.user_image = entity.r_user_image;
-        topReview.last_name = entity.r_user_last_name;
-        topReview.first_name = entity.r_user_first_name;
+        topReview.full_name = entity.r_user_full_name;
         topReview.user_id = entity.r_user_id;
 
         labData.id = entity.lab_id;

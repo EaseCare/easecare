@@ -141,7 +141,7 @@ TestDao.prototype.getTestLabs = function(data, cb){
     query.push(" ,t.id as test_id,t.name as test_name ");
     query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
     query.push(" ,SUM(ur.rating)/COUNT(ur.rating) as average_rating,ur.review,ur.created_date ");
-    query.push(" ,u.id as user_id,u.first_name,u.last_name,u.image_id,iu.path as user_image ");
+    query.push(" ,u.id as user_id,u.full_name,u.image_id,iu.path as user_image ");
     if(data.latitude && data.longitude && data.latitude !== "0.0" && data.logitude !== "0.0"){
         query.push(" ,( 6371 * acos( cos( radians(?) ) "); 
         query.push(" * cos( radians( a.`latitude` ) ) "); 

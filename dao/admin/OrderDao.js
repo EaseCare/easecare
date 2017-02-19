@@ -35,12 +35,20 @@ OrderDao.prototype.add = function(data, cb){
 OrderDao.prototype.addUpdateOrderPrice = function(data, cb){
     logger.debug("Add update order price dao call start (add())");
     var date = utilDao.getMySqlFormatDateTime(null);
+    var payableAmout = data.payable_amount;
+    if(payableAmout){
+        
+    }else{
+        var amount = data.amount||data.price||data.total;
+        var discount = data.discount_amount||0;
+        payableAmout = amount - discount;
+    }
     var queryData = {
         order_id: data.order_id,
         total: data.amount||data.price,
         discount_amount: data.discount_amount,
         offer_id: data.offer_id,
-        payable_amount: data.payable_amount,
+        payable_amount: payableAmout,
         created_date: date,
         edited_date: date,
         created_by: data.logged_in_user.user_id,
@@ -59,22 +67,23 @@ OrderDao.prototype.addUpdateOrderPrice = function(data, cb){
     if(data.offer_id){
         updateData.offer_id = data.offer_id;
     }
-    if(data.payable_amount){
-        updateData.payable_amount = data.payable_amount;
+    if(payableAmout){
+        updateData.payable_amount = payableAmout;
     }
     updateData.edited_date = date;
-    updateData.edited_by = data.logged_in_user.user_id
+    updateData.edited_by = data.logged_in_user.user_id;
     var query = [];
     query.push(" INSERT INTO `order_price` SET ? ON DUPLICATE KEY UPDATE ?");
     query = query.join(" ");
     
     var mySqlQuery = connection.query(query, [queryData,updateData], function (err, resultSet) {
         if (err) {
+            logger.error("Error in query"+JSON.stringify(err));
             return cb(err);
         }
         return cb(null, resultSet);
     });
-    logger.debug("add update order price query = " + mySqlQuery.sql);
+    logger.debug("add update order price query = " + JSON.stringify(mySqlQuery));
 }
 
 OrderDao.prototype.getOrderPrice = function(data, cb){

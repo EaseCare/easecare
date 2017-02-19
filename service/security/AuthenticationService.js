@@ -11,7 +11,8 @@ var sharedCache = require('service/cache').shared;
 var authenticationDao = new (require('dao/security/AuthenticationDao.js'))();
 var tokenService = new (require('service/security/TokenService.js'))();
 var userService = new (require('service/admin/UserService.js'))();
-
+var utilService = new (require('service/util/UtilService.js'))();
+var emailService = require('service/mail/EmailService.js');
 var AuthenticationService = function () { };
 
 AuthenticationService.prototype.logIn = function (modal, cb) {
@@ -78,6 +79,24 @@ AuthenticationService.prototype.fbLogIn = function(data, cb){
 	});
 	
 }
+AuthenticationService.prototype.checkEmail = function(data, cb){
+	logger.info("Authentication service  called (checkEmail())");
+	var self = this;
+	authenticationDao.checkEmail(data,function(err, result){
+		if(err){
+			logger.error("Error in check email service (checkEmail()) " + err);
+			return cb(err, status);
+		}
+		if(result && result.length>0){
+			logger.info("Email address found in system successfully");
+			return cb(null, responseCodes.SUCCESS, result);
+		}
+		else{
+			logger.info("Email address not found in system");
+			return cb(messages.emailNotFound, responseCodes.NOT_FOUND);
+		}
+	})
+} 
 AuthenticationService.prototype.changePassword = function(data, cb){
 	logger.info("Authentication service  called (changePassword())");
 	var self = this;
@@ -111,6 +130,28 @@ AuthenticationService.prototype.changePassword = function(data, cb){
 			logger.debug("user not found (changePassword())");
 			return cb(null,responseCodes.NOT_FOUND, {messages:"User Not Found"})
 		}
+	});
+}
+AuthenticationService.prototype.forgotPassword = function(data, cb){
+	logger.info("Authentication service  called (changePassword())");
+	var self = this;
+	self.checkEmail(data,function(err,status,result){
+		if(err){
+			logger.error("Error in isUserExist service (changePassword()) " + err);
+			return cb(err, status);
+		}
+		var newPassword = utilService.randomNumber(10);
+		data.new_password = newPassword; 
+		authenticationDao.setTempPassword(data, function (err, entity) {
+			if (err) {
+				logger.error("Error in authentication service (changePassword()) " + err);
+				return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+			}
+			logger.debug("Password Change Successfully");
+			emailService.sendMail("register",{email:data.email,subject:"Forgot Password",password:newPassword},function(err,status,data){
+				return cb(err,status,data);
+			});
+		});
 	});
 }
 AuthenticationService.prototype.isValidPassword = function(data, cb){

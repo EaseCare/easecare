@@ -39,7 +39,7 @@ LabDao.prototype.getLabReviews = function(data, cb){
     var query = [];
     query.push("SELECT l.name ");
     query.push(" ,ur.rating, ur.review ur.created_date "); 
-    query.push(" ,u.id, u.first_name, u.last_name ")
+    query.push(" ,u.id, u.full_name ")
     query.push(" FROM user_rating as ur ");
     query.push(" inner join user as u on u.id = ur.user_id ");
     query.push(" inner join lab as l on l.id = ur.lab_id ");

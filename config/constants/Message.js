@@ -5,6 +5,7 @@ module.exports = {
     logout: 'You have been successfully logged out',
     orderPaymentSuccess: 'Order payment recieved successfully',
     cartRemove: 'User Cart removed successfully',
+    emailNotFound: 'Email does not exist in system',
     cartItemRemove: 'Item removed from cart successfully',
     emptyCart : 'User cart is already empty',
     testPriceNotAvailable: 'Test price for this lab not available in system',

@@ -83,4 +83,22 @@ OfferDao.prototype.applyOffer = function (data, cb) {
     logger.debug("apply offer query = " + mySqlQuery.sql);
     
 }
+
+OfferDao.prototype.userOffer = function (data, cb) {
+    logger.debug("user offer method call start (useryOffer())");
+    var date = utilDao.getMySqlFormatDateTime(null);
+    var query = [];
+    query.push(" select * from user_offer where user_id =  ? and offer_id = ? ");
+    query = query.join("");
+    
+    var mySqlQuery = connection.query(query, [data.logged_in_user.user_id,data.id], function (err, resultSet) {
+        if (err) {
+            logger.error("error "+JSON.stringify(err));
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("user offer query = " + mySqlQuery.sql);
+    
+}
 module.exports = OfferDao;

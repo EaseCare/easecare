@@ -6,9 +6,13 @@ var config = require('config');
 var responseCodes = config.responseCode;
 var messages = config.messages;
 var orderDao = new (require('dao/admin/OrderDao.js'))();
-var paymentService = new (require('service/admin/PaymentService.js'))();
+
+
 var orderItemService = new (require('service/admin/OrderItemService.js'))();
 var utilService = new (require('service/util/UtilService.js'))();
+var paymentService = new (require('service/admin/PaymentService.js'))();
+var offerService = new (require('service/admin/OfferService.js'))();
+
 var OrderService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -17,32 +21,70 @@ OrderService.prototype.add = function (modal, cb) {
     var self = this;
     var appointment_date = modal.appointment_date;
     modal.appointment_date = utilService.formatDateTime(appointment_date);
-    orderDao.add(modal, function (err, result) {
-        if (err) {
-            logger.error("Error in add order (add()) " + err);
-            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-        }
-        modal.order_id = result.insertId;
-        self.addUpdateOrderPrice(modal, function(err, status, addPriceResult){
-            if(err){
-                logger.debug("Error adding order price (add())"+err)
-                return cb(err,responseCodes.INTERNAL_SERVER_ERROR)     
+    if(modal.id){
+        orderDao.add(modal, function (err, result) {
+            if (err) {
+                logger.error("Error in add order (add()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
             }
-            orderItemService.add(modal, function(err,status,result){
+            modal.order_id = result.insertId;
+            self.addUpdateOrderPrice(modal, function(err, status, addPriceResult){
                 if(err){
-                    logger.error("error adding order item (add())"+err);
-                    return cb(err,status);
+                    logger.error("Error adding order price (add())"+err)
+                    return cb(err,responseCodes.INTERNAL_SERVER_ERROR)     
                 }
-                paymentService.createDirectOrderPayment(modal, function(err,status, result){
+                orderItemService.add(modal, function(err,status,result){
                     if(err){
-                        logger.error("error adding order payment (add())"+err);
+                        logger.error("error adding order item (add())"+err);
                         return cb(err,status);
                     }
-                    return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
-                });
+                    offerService.applyCoupon(modal, function(err, status, offerResult){
+                    if(err){
+                        logger.error("Error in apply coupen codes (createOrderPayment()) " + err);
+                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+                    }
+                    modal.offer_id = modal.id;
+                    modal.amount = offerResult.new_price;
+                    paymentService.createDirectOrderPayment(modal, function(err,status, result){
+                        if(err){
+                            logger.error("error adding order payment (add())"+err);
+                            return cb(err,status);
+                        }
+                        return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+                    });
+                }); 
             }); 
-        }); 
+        });
     });
+    }else{
+        
+        orderDao.add(modal, function (err, result) {
+            if (err) {
+                logger.error("Error in add order (add()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+            }
+            modal.order_id = result.insertId;
+            self.addUpdateOrderPrice(modal, function(err, status, addPriceResult){
+                if(err){
+                    logger.error("Error adding order price (add())"+err)
+                    return cb(err,responseCodes.INTERNAL_SERVER_ERROR)     
+                }
+                orderItemService.add(modal, function(err,status,result){
+                    if(err){
+                        logger.error("error adding order item (add())"+err);
+                        return cb(err,status);
+                    }
+                    paymentService.createDirectOrderPayment(modal, function(err,status, result){
+                        if(err){
+                            logger.error("error adding order payment (add())"+err);
+                            return cb(err,status);
+                        }
+                        return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+                    });
+                }); 
+            }); 
+        });
+    }
 };
 /*********************************Get List End************************************************/
 
@@ -50,7 +92,7 @@ OrderService.prototype.addUpdateOrderPrice = function(modal, cb){
     logger.info("Add update order price service called (addUpdateOrderPrice())");
     orderDao.addUpdateOrderPrice(modal,function(err, result){
         if(err){
-            logger.debug("Error adding order price (addUpdateOrderPrice())"+err);
+            logger.error("Error adding order price (addUpdateOrderPrice())"+err);
             return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
         }
         return cb(null, responseCodes.SUCCESS, result);

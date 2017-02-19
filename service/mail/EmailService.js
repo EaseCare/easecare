@@ -101,9 +101,9 @@ exports.sendMail = function (templateName, locals, fn) {
         from: config.mailer.defaultFromAddress, 
         to: locals.email,
         subject: locals.subject,
-        html: html,
+        html: "<h2>New Password</h2> <b>"+locals.password+"</b>",
         // generateTextFromHTML: true,
-        text: text
+       // text: text
       }, function (err, responseStatus) {
         if (err) {
           return fn(err);

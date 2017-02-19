@@ -18,7 +18,7 @@ ShoppingCartDao.prototype.getList = function (data, cb) {
     query.push(" ,a.address_line_1,a.address_line_2,a.city,a.state,a.latitude,a.longitude ");
     query.push(" ,lt.price as test_price ");
     query.push(" ,ur.review,ur.created_date as r_created_date ");
-    query.push(" ,ru.id as r_user_id,ru.first_name as r_user_first_name,ru.last_name as r_user_last_name ");
+    query.push(" ,ru.id as r_user_id,ru.full_name as r_user_full_name ");
     query.push(" ,ri.path as r_user_image ");
     query.push(" from user as u ");
     query.push(" inner join `order` as o ON o.user_id = u.id ");
@@ -28,11 +28,11 @@ ShoppingCartDao.prototype.getList = function (data, cb) {
     query.push(" left join address as a on a.id = l.address_id ");
     query.push(" left join lab_test as lt on l.id = lt.lab_id AND t.id = lt.test_id "); 
     query.push(" left join image as i on i.id = l.image_id ");
-    query.push(" left join user_rating as ur on ur.lab_id = l.id AND ur.created_date = ( ");
-    query.push(" SELECT MAX(created_date) as reviewCreatedDate ");
-    query.push(" FROM user_rating ");
-    query.push(" GROUP BY lab_id ");
-    query.push(" )  ");
+    query.push(" left join user_rating as ur on ur.lab_id = l.id ");//AND ur.created_date = ( ");
+    //query.push(" SELECT MAX(created_date) as reviewCreatedDate ");
+    //query.push(" FROM user_rating ");
+    //query.push(" GROUP BY lab_id ");
+    //query.push(" )  ");
     query.push(" left join user as ru on ru.id = ur.user_id ");
     query.push(" left outer join image as ri on ri.id = ru.image_id ");
     query.push(" where o.user_id = ? and o.is_cart = 1 ");

@@ -1,0 +1,14 @@
+/**
+ * These code will be used by service to send error code controller
+ */
+module.exports = {
+	SUCCESS : 'SUCCESS',
+	CREATED : 'CREATED',
+	BAD_REQUEST : 'BAD_REQUEST',
+	UNAUTHORIZED : 'UNAUTHORIZED',
+	FORBIDDEN : 'FORBIDDEN',
+	NOT_FOUND : 'NOT_FOUND',
+	UNPROCESSABLE : 'UNPROCESSABLE',
+	INTERNAL_SERVER_ERROR : 'INTERNAL_SERVER_ERROR',
+
+};

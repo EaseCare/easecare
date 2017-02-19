@@ -24,7 +24,7 @@ app.get('/', function (req, res) {
 app.post('/apply', function (req, res) {
     logger.info("Apply Coupon request received");
     var data = req.data;
-    offerService.applyCoupon(data, function (err, status, data) {
+    offerService.applyCouponApi(data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });

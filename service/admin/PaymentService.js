@@ -7,6 +7,7 @@ var responseCodes = config.responseCode;
 var messages = config.messages;
 var paymentDao = new (require('dao/admin/PaymentDao.js'))();
 var shoppingCartService = new (require('service/admin/ShoppingCartService.js'))();
+var offerService = new (require('service/admin/OfferService.js'))();
 var PaymentService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -27,31 +28,60 @@ PaymentService.prototype.getList = function (modal, cb) {
 PaymentService.prototype.createOrderPayment = function (modal, cb) {
     logger.info("createOrderPayment service called (createOrderPayment())");
     var self = this;
- 
-    paymentDao.createOrderPayment(modal, function(err,result){
-        if (err) {
-            logger.error("Error in create order payment (createOrderPayment()) " + err);
-            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-        }
-        self.createOrderAddress(modal,function(err,status,result){
+    logger.error("createOrderPayment modal.id"+modal.id+" and type is "+typeof modal.id);
+    if(modal.id){
+        offerService.applyCoupon(modal, function(err, status, offerResult){
             if(err){
-                logger.error("Error in create order address (createOrderPayment()) " + err);
-                return cb(err,status);
+                logger.error("Error in apply coupen codes (createOrderPayment()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
             }
-            shoppingCartService.completeCart(modal,function(err,status,result){
-               if(err){
-                logger.error("Error in complete user cart (createOrderPayment()) " + err);
-                return cb(err,status);
+            modal.amount = offerResult.new_price;
+            paymentDao.createOrderPayment(modal, function(err,result){
+                if (err) {
+                    logger.error("Error in create order payment (createOrderPayment()) " + err);
+                    return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
                 }
-                return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});  
+                self.createOrderAddress(modal,function(err,status,result){
+                    if(err){
+                        logger.error("Error in create order address (createOrderPayment()) " + err);
+                        return cb(err,status);
+                    }
+                    shoppingCartService.completeCart(modal,function(err,status,result){
+                    if(err){
+                        logger.error("Error in complete user cart (createOrderPayment()) " + err);
+                        return cb(err,status);
+                        }
+                        return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});  
+                    });
+                });
             });
         });
-    });
+    }else{
+        paymentDao.createOrderPayment(modal, function(err,result){
+            if (err) {
+                logger.error("Error in create order payment (createOrderPayment()) " + err);
+                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+            }
+            self.createOrderAddress(modal,function(err,status,result){
+                if(err){
+                    logger.error("Error in create order address (createOrderPayment()) " + err);
+                    return cb(err,status);
+                }
+                shoppingCartService.completeCart(modal,function(err,status,result){
+                if(err){
+                    logger.error("Error in complete user cart (createOrderPayment()) " + err);
+                    return cb(err,status);
+                    }
+                    return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});  
+                });
+            });
+        });
+    }
 }
 PaymentService.prototype.createDirectOrderPayment = function (modal, cb) {
     logger.info("createOrderPayment service called (createOrderPayment())");
     var self = this;
- 
+    logger.error("createOrderPayment modal.id"+modal.id+" and type is "+typeof modal.id);
     paymentDao.createOrderPayment(modal, function(err,result){
         if (err) {
             logger.error("Error in create order payment (createOrderPayment()) " + err);
@@ -62,7 +92,7 @@ PaymentService.prototype.createDirectOrderPayment = function (modal, cb) {
                 logger.error("Error in create order address (createOrderPayment()) " + err);
                 return cb(err,status);
             }
-             return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});
+            return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess});
         });
     });
 }

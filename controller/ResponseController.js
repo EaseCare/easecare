@@ -33,7 +33,7 @@ module.exports = function (err, status, data, res) {
 		if(!!status){
         	res.status(responseToHttpResponseMapper(status));
 		}
-
+		logger.debug("The response data came is"+JSON.stringify(data));
         res.json(data);
         return res.end();
 };
