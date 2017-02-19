@@ -41,7 +41,7 @@ app.get('/reviews/:id', function (req, res) {
         return response(err, status, data, res);
     });
 });
-app.get('/:id', function (req, res) {
+/*app.get('/:id', function (req, res) {
     logger.info("Get Lab detail request received");
     var data = req.data;
     data.id = req.query.id;
@@ -49,7 +49,7 @@ app.get('/:id', function (req, res) {
     labService.getDetail(data, function (err, status, data) {
         return response(err, status, data, res);
     });
-});
+});*/
 
 
 module.exports = app;
