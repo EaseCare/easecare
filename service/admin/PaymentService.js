@@ -8,6 +8,8 @@ var messages = config.messages;
 var paymentDao = new (require('dao/admin/PaymentDao.js'))();
 var shoppingCartService = new (require('service/admin/ShoppingCartService.js'))();
 var offerService = new (require('service/admin/OfferService.js'))();
+var paytm_config = require('paytm/paytm_config').paytm_config;
+var paytm_checksum = require('paytm/checksum');
 var PaymentService = function () { };
 
 /*********************************Get List Start************************************************/
@@ -120,6 +122,76 @@ PaymentService.prototype.getOrdersPayment = function(modal, cb){
         }
         return cb(null, responseCodes.SUCCESS, result);
     });    
+}
+
+PaymentService.prototype.generateChecksum = function(modal, cb){
+    logger.info("Get order detail for payment service called");
+    
+    paymentDao.getOrderDetailForPayment(modal, function(err, result){
+        if(err){
+            logger.error("Error in get order detail for payment "+err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(result && result.length>0){
+            var inputData = {
+                "MID":paytm_config.MID,
+                "ORDER_ID":result[0].id,
+                "CUST_ID":result[0].user_id,
+                "INDUSTRY_TYPE_ID":paytm_config.INDUSTRY_TYPE_ID,
+                "CHANNEL_ID":paytm_config.CHANNEL_ID,
+                "TXN_AMOUNT":result[0].payable_amount,
+                "WEBSITE":paytm_config.WEBSITE
+            };
+            paytm_checksum.genchecksum(inputData, paytm_config.MERCHANT_KEY, function (err, data) {
+                if(err){
+                    return cb("Something wrong", responseCodes.INTERNAL_SERVER_ERROR);
+                }else{
+                    var finalResponse = {};
+                    finalResponse.CHECKSUMHASH = data.CHECKSUMHASH;
+                    return cb(err, responseCodes.SUCCESS, finalResponse);
+                } 
+            });
+        }else{
+            return cb("Order not found with id",responseCodes.NOT_FOUND );
+        }
+    })
+}
+PaymentService.prototype.verifyChecksum = function(modal, cb){
+    logger.info("Get order detail for payment service called");
+    
+    paymentDao.getOrderDetailForPayment(modal, function(err, result){
+        if(err){
+            logger.error("Error in get order detail for payment "+err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        if(result && result.length>0){
+            var inputData = {
+                "MID":paytm_config.MID,
+                "ORDER_ID":result[0].id,
+                "CUST_ID":result[0].user_id,
+                "INDUSTRY_TYPE_ID":paytm_config.INDUSTRY_TYPE_ID,
+                "CHANNEL_ID":paytm_config.CHANNEL_ID,
+                "TXN_AMOUNT":result[0].payable_amount,
+                "WEBSITE":paytm_config.WEBSITE,
+                "CHECKSUMHASH":modal.CHECKSUMHASH
+            };
+            
+            var decodedBody = inputData;
+            var isCheckSumValid = false;
+            if(paytm_checksum.verifychecksum(decodedBody, paytm_config.MERCHANT_KEY)) {
+                isCheckSumValid = true;
+            }
+            if(decodedBody.CHECKSUMHASH){
+                delete decodedBody.CHECKSUMHASH;
+            }
+            var returnData = {
+                isCheckSumValid : isCheckSumValid
+            }
+            return cb(null, responseCodes.SUCCESS, returnData);
+        }else{
+            return cb("Order not found with id",responseCodes.NOT_FOUND );
+        }
+    })
 }
 
 PaymentService.prototype.applyCoupon = function(modal, cb){

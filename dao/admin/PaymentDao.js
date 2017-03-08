@@ -99,4 +99,27 @@ PaymentDao.prototype.createOrderAddress = function(data, cb){
     });
     logger.debug("create order address query = " + mySqlQuery.sql);
 }
+PaymentDao.prototype.getOrderDetailForPayment = function(data, cb){
+    logger.debug("Get order detail for payment dao called (getOrderDetailForPayment())"+JSON.stringify(data));
+    
+     var query = [];
+    query.push(" SELECT "); 
+    query.push(" `order`.id , `order`.user_id ");
+    query.push(" ,`order_price`.payable_amount ");
+    query.push(" from `order` ");
+    query.push(" inner join `order_price` on `order_price`.order_id = `order`.id ");
+    query.push(" where `order`.id = ? ");/*and user_id = ? ");*/
+
+    query = query.join("");
+
+    var mySqlQuery = connection.query(query,[data.id], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("create order payment query = " + mySqlQuery.sql);
+    
+}
+
 module.exports = PaymentDao;
