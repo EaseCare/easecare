@@ -126,7 +126,7 @@ PaymentService.prototype.getOrdersPayment = function(modal, cb){
 
 PaymentService.prototype.generateChecksum = function(modal, cb){
     logger.info("Get order detail for payment service called");
-    
+    modal.id = modal.ORDER_ID;
     paymentDao.getOrderDetailForPayment(modal, function(err, result){
         if(err){
             logger.error("Error in get order detail for payment "+err);
@@ -142,6 +142,14 @@ PaymentService.prototype.generateChecksum = function(modal, cb){
                 "TXN_AMOUNT":result[0].payable_amount,
                 "WEBSITE":paytm_config.WEBSITE
             };
+            if(result[0].user_id != modal.CUST_ID){
+                logger.error("Order does not belong to this customer");
+                return cb("Order does not belong to this customer", responseCodes.UNPROCESSABLE);
+            }
+            if(result[0].payable_amount != modal.TXN_AMOUNT){
+                logger.error("Order payable amount is diffrent");
+                return cb("Order payable amount is diffrent", responseCodes.UNPROCESSABLE);
+            }
             paytm_checksum.genchecksum(inputData, paytm_config.MERCHANT_KEY, function (err, data) {
                 if(err){
                     return cb("Something wrong", responseCodes.INTERNAL_SERVER_ERROR);
@@ -158,7 +166,7 @@ PaymentService.prototype.generateChecksum = function(modal, cb){
 }
 PaymentService.prototype.verifyChecksum = function(modal, cb){
     logger.info("Get order detail for payment service called");
-    
+    modal.id = modal.ORDER_ID;
     paymentDao.getOrderDetailForPayment(modal, function(err, result){
         if(err){
             logger.error("Error in get order detail for payment "+err);

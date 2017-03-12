@@ -61,6 +61,8 @@ module.exports = function(app){
 		new RegExp('\/v1\/security\/signup', 'i'),
 		new RegExp('\/v1\/security\/fblogin', 'i'),
 		new RegExp('\/v1\/security\/forgotpassword', 'i'),
+		new RegExp('\/v1\/admin\/payment\/paytm\/generate_checksum', 'i'),
+		new RegExp('\/v1\/admin\/payment\/paytm\/verify_checksum', 'i')
 		//new RegExp('\/reports', 'i')
 	];
 

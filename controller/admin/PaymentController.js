@@ -34,19 +34,19 @@ app.get('/orders', function (req, res) {
     });
 });
 
-app.get('/paytm/generate_checksum/:id', function(req, res){
+app.get('/paytm/generate_checksum', function(req, res){
     logger.info("Paytm generate checksum request recieved");
     var data = req.data;
-    data.id = req.params.id;
+    //data.id = req.params.id;
     paymentService.generateChecksum(data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
 
-app.post('/paytm/verify_checksum/:id', function(req, res){
+app.post('/paytm/verify_checksum', function(req, res){
     logger.info("Paytm verify checksum request recieved");
     var data = req.data;
-    data.id = req.params.id;
+    //data.id = req.params.id;
     paymentService.verifyChecksum(data, function (err, status, data) {
         return response(err, status, data, res);
     });
