@@ -156,7 +156,9 @@ PaymentService.prototype.generateChecksum = function(modal, cb){
                 }else{
                     var finalResponse = {};
                     finalResponse.CHECKSUMHASH = data.CHECKSUMHASH;
-                    return cb(err, responseCodes.SUCCESS, data);
+                    finalResponse.payt_STATUS = data.payt_STATUS;
+                    finalResponse.ORDER_ID = data.ORDER_ID
+                    return cb(err, responseCodes.SUCCESS, finalResponse);
                 } 
             });
         }else{
