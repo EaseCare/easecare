@@ -156,7 +156,7 @@ PaymentService.prototype.generateChecksum = function(modal, cb){
                 }else{
                     var finalResponse = {};
                     finalResponse.CHECKSUMHASH = data.CHECKSUMHASH;
-                    return cb(err, responseCodes.SUCCESS, finalResponse);
+                    return cb(err, responseCodes.SUCCESS, data);
                 } 
             });
         }else{
