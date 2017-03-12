@@ -34,7 +34,7 @@ app.get('/orders', function (req, res) {
     });
 });
 
-app.get('/paytm/generate_checksum', function(req, res){
+app.post('/paytm/generate_checksum', function(req, res){
     logger.info("Paytm generate checksum request recieved");
     var data = req.data;
     //data.id = req.params.id;
