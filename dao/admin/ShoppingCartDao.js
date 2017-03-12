@@ -36,7 +36,7 @@ ShoppingCartDao.prototype.getList = function (data, cb) {
     query.push(" left join user as ru on ru.id = ur.user_id ");
     query.push(" left outer join image as ri on ri.id = ru.image_id ");
     query.push(" where o.user_id = ? and o.is_cart = 1 ");
-    //query.push(" group by c.test_id ");
+    query.push(" group by oi.id ");
     query = query.join("");
 
 
