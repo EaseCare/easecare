@@ -85,7 +85,7 @@ ShoppingCartService.prototype.add = function (modal, cb) {
                             logger.error("Error in get order price"+err);
                             return cb(messages.orderPriceNotFound, responseCodes.INTERNAL_SERVER_ERROR);
                         }
-                        modal.amount = total_price;
+                        modal.amount = price;
                         orderItemService.addUpdateOrderPrice(modal, function(err, status, code){
                             if(err){
                                 logger.error("Error add or update price"+err);
