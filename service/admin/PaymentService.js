@@ -139,7 +139,7 @@ PaymentService.prototype.generateChecksum = function(modal, cb){
                 "CUST_ID":result[0].user_id,
                 "INDUSTRY_TYPE_ID":paytm_config.INDUSTRY_TYPE_ID,
                 "CHANNEL_ID":paytm_config.CHANNEL_ID,
-                "TXN_AMOUNT":result[0].payable_amount,
+                "TXN_AMOUNT":modal.TXN_AMOUNT,
                 "WEBSITE":paytm_config.WEBSITE
             };
             if(result[0].user_id != modal.CUST_ID){

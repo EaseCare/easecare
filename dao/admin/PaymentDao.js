@@ -105,9 +105,9 @@ PaymentDao.prototype.getOrderDetailForPayment = function(data, cb){
      var query = [];
     query.push(" SELECT "); 
     query.push(" `order`.id , `order`.user_id ");
-    query.push(" ,`order_price`.payable_amount ");
+   // query.push(" ,`order_price`.payable_amount ");
     query.push(" from `order` ");
-    query.push(" inner join `order_price` on `order_price`.order_id = `order`.id ");
+   // query.push(" inner join `order_price` on `order_price`.order_id = `order`.id ");
     query.push(" where `order`.id = ? ");/*and user_id = ? ");*/
 
     query = query.join("");
