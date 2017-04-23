@@ -16,12 +16,17 @@ var orderItemService = new OrderItemService();
 
 
 app.post('/', function (req, res) {
-    logger.info("Get Category list request received");
+    logger.info("add order request received");
     orderService.add(req.data, function (err, status, data) {
         return response(err, status, data, res);
     });
 });
-
+app.post('/payment', function (req, res) {
+    logger.info("add order payment request received");
+    orderService.applyCouponAndPayment(req.data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
 app.get('/items', function (req, res) {
     logger.info("Get Order Item list request received");
     orderItemService.getOrderItemStatus(req.data, function (err, status, data) {

@@ -21,71 +21,62 @@ OrderService.prototype.add = function (modal, cb) {
     var self = this;
     var appointment_date = modal.appointment_date;
     modal.appointment_date = utilService.formatDateTime(appointment_date);
-    if(modal.id){
-        orderDao.add(modal, function (err, result) {
-            if (err) {
-                logger.error("Error in add order (add()) " + err);
-                return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-            }
-            modal.order_id = result.insertId;
-            self.addUpdateOrderPrice(modal, function(err, status, addPriceResult){
-                if(err){
-                    logger.error("Error adding order price (add())"+err)
-                    return cb(err,responseCodes.INTERNAL_SERVER_ERROR)     
-                }
-                orderItemService.add(modal, function(err,status,result){
-                    if(err){
-                        logger.error("error adding order item (add())"+err);
-                        return cb(err,status);
-                    }
-                    offerService.applyCoupon(modal, function(err, status, offerResult){
-                    if(err){
-                        logger.error("Error in apply coupen codes (createOrderPayment()) " + err);
-                        return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
-                    }
-                    modal.offer_id = modal.id;
-                    modal.amount = offerResult.new_price;
-                    paymentService.createDirectOrderPayment(modal, function(err,status, result){
-                        if(err){
-                            logger.error("error adding order payment (add())"+err);
-                            return cb(err,status);
-                        }
-                        return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
-                    });
-                }); 
-            }); 
-        });
-    });
-    }else{
+    orderDao.add(modal, function (err, result) {
+        if (err) {
+            logger.error("Error in add order (add()) " + err);
+            return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+        }
+        modal.order_id = result.insertId;
         
-        orderDao.add(modal, function (err, result) {
-            if (err) {
-                logger.error("Error in add order (add()) " + err);
+            orderItemService.add(modal, function(err,status,result){
+                if(err){
+                    logger.error("error adding order item (add())"+err);
+                    return cb(err,status);
+                }
+                return cb(null, responseCodes.SUCCESS, {"order_id":modal.order_id}); 
+            });  
+    });
+};
+
+OrderService.prototype.applyCouponAndPayment = function(modal, cb){
+    logger.info("Apply coupen and payment service called (applyCouponAndPayment())");
+    var self = this;
+    if(modal.id){
+        modal.total_price = modal.amount;
+        offerService.applyCoupon(modal, function(err, status, offerResult){
+            if(err){
+                logger.error("Error in apply coupen codes (applyCouponAndPayment()) " + err);
                 return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
             }
-            modal.order_id = result.insertId;
-            self.addUpdateOrderPrice(modal, function(err, status, addPriceResult){
+            modal.offer_id = modal.id;
+            modal.amount = offerResult.new_price;
+            paymentService.createDirectOrderPayment(modal, function(err,status, result){
                 if(err){
-                    logger.error("Error adding order price (add())"+err)
-                    return cb(err,responseCodes.INTERNAL_SERVER_ERROR)     
+                    logger.error("error adding order payment (applyCouponAndPayment())"+err);
+                    return cb(err,status);
                 }
-                orderItemService.add(modal, function(err,status,result){
-                    if(err){
-                        logger.error("error adding order item (add())"+err);
-                        return cb(err,status);
-                    }
-                    paymentService.createDirectOrderPayment(modal, function(err,status, result){
-                        if(err){
-                            logger.error("error adding order payment (add())"+err);
-                            return cb(err,status);
-                        }
-                        return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
-                    });
-                }); 
-            }); 
+                return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+            });
+        });
+    }else{
+        modal.discount_amount = 0;
+        modal.offer_id = null;
+        self.addUpdateOrderPrice(modal, function(err, status, addPriceResult){
+            if(err){
+                logger.error("Error adding order price (add())"+err)
+                return cb(err,responseCodes.INTERNAL_SERVER_ERROR)     
+            }
+            paymentService.createDirectOrderPayment(modal, function(err,status, result){
+                if(err){
+                    logger.error("error adding order payment (applyCouponAndPayment())"+err);
+                    return cb(err,status);
+                }
+                return cb(null, responseCodes.SUCCESS, {"message":messages.orderPaymentSuccess}); 
+            });
         });
     }
-};
+    
+}
 /*********************************Get List End************************************************/
 
 OrderService.prototype.addUpdateOrderPrice = function(modal, cb){
