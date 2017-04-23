@@ -146,10 +146,10 @@ PaymentService.prototype.generateChecksum = function(modal, cb){
                 logger.error("Order does not belong to this customer");
                 return cb("Order does not belong to this customer", responseCodes.UNPROCESSABLE);
             }
-            if(result[0].payable_amount != modal.TXN_AMOUNT){
+            /*if(result[0].payable_amount != modal.TXN_AMOUNT){
                 logger.error("Order payable amount is diffrent");
                 return cb("Order payable amount is diffrent", responseCodes.UNPROCESSABLE);
-            }
+            }*/
             paytm_checksum.genchecksum(inputData, paytm_config.MERCHANT_KEY, function (err, data) {
                 if(err){
                     return cb("Something wrong", responseCodes.INTERNAL_SERVER_ERROR);
