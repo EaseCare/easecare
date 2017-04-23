@@ -7,6 +7,8 @@ var responseCodes = config.responseCode;
 var messages = config.messages;
 var fileStorage = require("helper/FileUploader.js");
 var fileUtil = require("helper/FileUtil.js");
+var smsGenerator = require("helper/SmsGenerator.js");
+var guid = require('guid');
 var userDao = new (require('dao/admin/UserDao.js'))();
 var imageDao = new (require('dao/admin/ImageDao.js'))();
 var utilService = new (require('service/util/UtilService.js'))();
@@ -54,6 +56,7 @@ UserService.prototype.add = function (data, cb) {
     logger.info("User add service called (add())");
     var self = this;
     var dob = data.date_of_birth;
+    var correlationId = guid.create();
     if(dob){
         data.date_of_birth = utilService.formatDate(dob);
     }
@@ -64,6 +67,7 @@ UserService.prototype.add = function (data, cb) {
         }
 
         data.id =  addUserresult.insertId;
+        data.otp = correlationId;
         userDao.addUserLogin(data, function (err, addUserLoginResult) {
             if (err) {
                 logger.error("Error in add user login (add()) " + err);
@@ -75,6 +79,8 @@ UserService.prototype.add = function (data, cb) {
             };
             logger.debug(" user detail data is (add())" + JSON.stringify(userDetailData));
             self.getDetail(userDetailData, function (err, code, getUserDetailResult) {
+                //data.mobile_number
+                smsGenerator.sendMessage(null,correlationId);
                 return cb(err, code, getUserDetailResult);
             });
         });

@@ -64,6 +64,13 @@ app.post('/login', function (req, res) {
     });
 });
 
+
+app.post('/enableUser', function (req, res) {
+    logger.info("enableUser request received"+JSON.stringify(req.data));
+    authenticationService.enableUserFromOTP(req.data, function (err, status, data) {
+        return response(err, status, data, res);
+    });
+});
 app.post('/fblogin', function (req, res) {
     logger.info("fbLogin request received"+req.data);
     authenticationService.fbLogIn(req.data, function (err, status, data) {

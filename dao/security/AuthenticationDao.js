@@ -82,6 +82,22 @@ AuthenticationDao.prototype.changePassword =  function(data, cb) {
     });
     logger.debug("isValidPassword query = "+mySqlQuery.sql);
 }
+AuthenticationDao.prototype.enableUser =  function(data, cb) {
+    logger.debug("enableUser dao method call start");
+    
+    var queryData = {active:1};
+    var query = [];
+    query.push(" update user_login set ? where otp = ? ");
+    query = query.join("");
+    
+    var mySqlQuery = connection.query(query, [queryData, data.otp], function (err, resultSet) {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, resultSet);
+    });
+    logger.debug("enableUser query = "+mySqlQuery.sql);
+}
 AuthenticationDao.prototype.setTempPassword =  function(data, cb) {
     logger.debug("setTempPassword dao method call start");
     

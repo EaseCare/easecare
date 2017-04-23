@@ -25,11 +25,31 @@ AuthenticationService.prototype.logIn = function (modal, cb) {
 			return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
 		}
 		if (entity && entity.length > 0) {
-			self.genrateToken(entity, function(err, status, result){
-				return cb(err, status, result);
-			});
+			if(entity[0].active){
+				self.genrateToken(entity, function(err, status, result){
+					return cb(err, status, result);
+				});
+			}else{
+				return cb(messages.notActive, responseCodes.UNAUTHORIZED);
+			}
 		} else {
 			return cb(messages.wrongCredentials, responseCodes.UNAUTHORIZED);
+		}
+	});
+}
+AuthenticationService.prototype.enableUserFromOTP = function (modal, cb) {
+	logger.info("Login service called (logIn())");
+	var self = this;
+
+	authenticationDao.enableUser(modal, function (err, entity) {
+		if (err) {
+			logger.error("Error in authentication (logIn()) " + err);
+			return cb(err, responseCodes.INTERNAL_SERVER_ERROR);
+		}
+		if (entity && entity.affectedRows > 0) {
+				return cb(null, responseCodes.SUCCESS, {messages: messages.userActiveSuccess});
+		} else {
+			return cb(messages.wrongOtp, responseCodes.UNAUTHORIZED);
 		}
 	});
 }
