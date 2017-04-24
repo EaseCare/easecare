@@ -58,6 +58,7 @@ module.exports = function(app){
 */
 	var apiWithoutAuthorization = [
 		new RegExp('\/v1\/security\/login', 'i'),
+		new RegExp('\/v1\/security\/enableUser', 'i'),
 		new RegExp('\/v1\/security\/signup', 'i'),
 		new RegExp('\/v1\/security\/fblogin', 'i'),
 		new RegExp('\/v1\/security\/forgotpassword', 'i'),
