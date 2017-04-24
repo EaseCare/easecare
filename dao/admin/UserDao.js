@@ -135,6 +135,7 @@ UserDao.prototype.addUserLogin = function (data, cb) {
         email: data.email,
         mobile_number: data.mobile_number,
         password: data.password,
+        otp: data.otp,
         is_facebook:data.is_facebook || 0,
         active:0,
         created_date: date,
