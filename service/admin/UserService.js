@@ -56,7 +56,7 @@ UserService.prototype.add = function (data, cb) {
     logger.info("User add service called (add())");
     var self = this;
     var dob = data.date_of_birth;
-    var correlationId = guid.create();
+    var correlationId = Math.floor(Math.random()*90000) + 10000; //guid.create();
     if(dob){
         data.date_of_birth = utilService.formatDate(dob);
     }
