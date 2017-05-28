@@ -1,9 +1,10 @@
 module.exports = {
   paytm_config: {
-		MID: 'nLd02XJbtsTaZsYn',
+		MID: 'EaseCa48947630941575',
 		WEBSITE: 'www.easecares.com',
     CHANNEL_ID: 'WAP',
     INDUSTRY_TYPE_ID: '',
-    MERCHANT_KEY : 'EaseCa8288019824'
+    MERCHANT_KEY : 'nLd02XJbtsTaZsYn'
+    
 	}
 }
